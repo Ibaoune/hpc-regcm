@@ -1,0 +1,17 @@
+# Ignorer tous les dossiers de données et de résultats
+REGCM_RUNS/*/output/
+REGCM_RUNS/*/input/
+REGCM_GLOBEDAT/
+simus_from_Graziano/
+*.nc
+*.tmp
+*.log
+*.err
+*.out
+
+# Ignorer les exécutables et dossiers de compilation du code source
+SRC_REGCM/
+GitRepoRegCMIWRI/
+bin/
+*.o
+*.mod
