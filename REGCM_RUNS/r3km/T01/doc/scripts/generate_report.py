@@ -162,7 +162,7 @@ Since ATM and RAD consume 88.6% of storage, reducing SRF frequency will yield mi
 
 Trade-offs:
 - **Scenario A (SRF 3h):** Minimal savings. Loss of sub-daily precipitation and temperature extreme peaks. Not highly recommended since it saves little space.
-- **Scenario B (ATM 12h):** Massive savings (6.5 TB/year). Trade-off: You lose the diurnal cycle of the 3D atmosphere (e.g., vertical wind shear, boundary layer diurnal evolution). If you only need 3D fields for synoptic background or boundary conditions, this is an excellent choice.
+- **Scenario B (ATM 12h):** Massive savings (6.5 TB/year). Trade-off: We lose the diurnal cycle of the 3D atmosphere (e.g., vertical wind shear, boundary layer diurnal evolution). If we only need 3D fields for synoptic background or boundary conditions, this is an excellent choice.
 - **Scenario C (ATM 24h):** Saves 9.3 TB/year. Trade-off: Provides only a daily snapshot of the 3D atmosphere. Cannot diagnose any sub-daily 3D atmospheric processes.
 
 ## 9. STORAGE HEADROOM AND PRACTICAL HPC REQUIREMENT
@@ -200,7 +200,7 @@ The margin accounts for:
 
 | Decision | Question to resolve | Recommended action |
 |---|---|---|
-| ATM Frequency | Do you strictly need 6-hourly 3D atmospheric fields? | If not studying 3D diurnal cycles, reduce ATM to 12h or 24h to save up to 9 TB/year. |
+| ATM Frequency | Do we strictly need 6-hourly 3D atmospheric fields? | If not studying 3D diurnal cycles, reduce ATM to 12h or 24h to save up to 9 TB/year. |
 | Post-processing | How to analyze 25GB daily files? | Write a script to extract only the specific 3D variables of interest (e.g. T, U, V at 850hPa) immediately after each month finishes, and delete the raw ATM file. |
 | Retention | Keep all SAV files? | SAV files are 27 GB each. Consider keeping only the SAV file for the 1st of January each year, and deleting intermediate monthly SAV files once a year completes successfully. |
 
