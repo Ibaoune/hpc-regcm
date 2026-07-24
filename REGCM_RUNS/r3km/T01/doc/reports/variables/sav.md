@@ -1,9 +1,9 @@
 # STREAM ANALYSIS REPORT: SAV
 
 ## 1. WRITE FREQUENCY HISTORY OVER THE ENTIRE SIMULATION
-- **Total files found:** 25
+- **Total files found:** 27
 
--   25 files weigh approx 26 GB : Frequency -> 1 timestep/file (Monthly / Daily or End of run)
+-   27 files weigh approx 26 GB : Frequency -> 1 timestep/file (Monthly / Daily or End of run)
 
 ## 2. VARIABLES CONTAINED IN THIS STREAM (from the last file)
 

@@ -52,7 +52,7 @@ def get_variables(filepath):
                 attr_match = re.match(r'\s*([a-zA-Z0-9_]+):([a-zA-Z0-9_]+)\s*=\s*(.*)\s*;', line)
                 if attr_match and current_var == attr_match.group(1):
                     attr_name = attr_match.group(2)
-                    attr_val = attr_match.group(3).strip('"')
+                    attr_val = attr_match.group(3).strip(' "')
                     if attr_name in ['long_name', 'units']:
                         vars_dict[current_var][attr_name] = attr_val
                         
@@ -65,9 +65,9 @@ def analyze_stream(stream):
         
     print(f"Analyzing stream {stream}...")
     
-    # Sort files to get the most recent one as sample
+    # Sort files and get the FIRST one as sample (because the last one might be currently being written by a running simulation and ncdump will fail)
     files.sort()
-    sample_file = files[-1]
+    sample_file = files[0]
     
     # Get variables dictionary
     vars_dict = get_variables(sample_file)

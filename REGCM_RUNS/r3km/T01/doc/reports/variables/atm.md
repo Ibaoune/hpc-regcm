@@ -1,13 +1,60 @@
 # STREAM ANALYSIS REPORT: ATM
 
 ## 1. WRITE FREQUENCY HISTORY OVER THE ENTIRE SIMULATION
-- **Total files found:** 699
+- **Total files found:** 703
 
--    1 files weigh approx 19 GB : Frequency -> 1 timestep/file (Monthly / Daily or End of run)
--  697 files weigh approx 25 GB : Frequency -> 6-hourly (6h, 4 timesteps/file)
+-    1 files weigh approx  0 GB : Frequency -> 1 timestep/file (Monthly / Daily or End of run)
+-  701 files weigh approx 25 GB : Frequency -> 6-hourly (6h, 4 timesteps/file)
 -    1 files weigh approx 32 GB : Frequency -> 6-hourly (6h, 5 timesteps/file)
 
 ## 2. VARIABLES CONTAINED IN THIS STREAM (from the last file)
 
 | Variable | Unit | Description (long_name) |
 |---|---|---|
+| a | m | vertical coordinate formula term a(k) |
+| b | 1 | vertical coordinate formula term b(k) |
+| rlon | degrees | longitude in rotated pole grid |
+| rlat | degrees | latitude in rotated pole grid |
+| xlon | degrees_east | Longitude on Cross Points |
+| xlat | degrees_north | Latitude on Cross Points |
+| mask | 1 | Land Mask |
+| topo | m | Surface Model Elevation |
+| areacella | m2 | Land Area Fraction |
+| ps | Pa | Surface Air Pressure |
+| pr | kg m-2 s-1 | Precipitation |
+| ts | K | Surface Temperature |
+| mrso | kg m-2 | Total Soil Moisture Content |
+| ua | m s-1 | Grid Eastward Wind |
+| va | m s-1 | Grid Northward Wind |
+| wa | m s-1 | Vertical Component of Wind |
+| ta | K | Air Temperature |
+| pai | 1 | Exner function |
+| hus | kg kg-1 | Specific Humidity |
+| clw | kg kg-1 | Mass Fraction of Cloud Liquid Water |
+| rh | % | Relative Humidity |
+| cli | kg kg-1 | Mass Fraction of Ice |
+| clr | kg kg-1 | Mass Fraction of Rain |
+| cls | kg kg-1 | Mass Fraction of Snow |
+| zf | m | Height at Full Levels |
+| zh | m | Height at Half Levels |
+| pf | Pa | Pressure at Full Levels |
+| ph | Pa | Pressure at Half Levels |
+| rainls | kg m-2 s-1 | Large Scale Precipitation at Each Level |
+| ttenadh | K.s-1 | Temperature tendency due to horizontal advection |
+| ttenadv | K.s-1 | Temperature tendency due to vertical advection |
+| ttentbl | K.s-1 | Temperature tendency due to surface boundary layer |
+| ttendif | K.s-1 | Temperature tendency due to diffusion |
+| ttenbdy | K.s-1 | Temperature tendency due to boundary conditions |
+| ttencon | K.s-1 | Temperature tendency due to convection |
+| ttenadi | K.s-1 | Temperature tendency due to adiabatic |
+| ttenrad | K.s-1 | Temperature tendency due to radiation heating |
+| ttenlsc | K.s-1 | Temperature tendency due to large scale latent heat exchange |
+| qtenadh | s-1 | Mixing ratio tendency due to horizontal advection |
+| qtenadv | s-1 | Mixing ratio tendency due to vertical advection |
+| qtentbl | s-1 | mixing_ratio_tendency_due_to_surface_boundary_layer |
+| qtendif | s-1 | Mixing ratio tendency due to diffusion |
+| qtenbdy | s-1 | Mixing ratio tendency due to boundary conditions |
+| qtencon | s-1 | Mixing ratio tendency due to convection |
+| qtenadi | s-1 | Mixing ratio tendency due to adiabatic |
+| qtenrad | s-1 | Mixing ratio tendency due to radiation heating |
+| qtenlsc | s-1 | Mixing ratio tendency due to large scale latent heat exchange |
