@@ -11,8 +11,8 @@ import subprocess
 import re
 
 streams = ['ATM', 'SRF', 'RAD', 'SHF', 'STS', 'SAV']
-output_dir = "output"
-report_dir = "report_outputs"
+output_dir = "../../output"
+report_dir = "../reports/variables"
 
 # Command prefix to load modules before ncdump
 prefix = "module purge && module load GCC/11.2.0 OpenMPI/4.1.1-GCC-11.2.0 netCDF/4.8.1-gompi-2021b && "
@@ -109,29 +109,26 @@ def analyze_stream(stream):
         freq_history.append(f"- {count:4d} files weigh approx {size_gb:2d} GB : Frequency -> {freq_str}")
     
     # Write the report
-    report_file = os.path.join(report_dir, f"{stream.lower()}.txt")
+    os.makedirs(report_dir, exist_ok=True)
+    report_file = os.path.join(report_dir, f"{stream.lower()}.md")
     with open(report_file, "w") as f:
-        f.write(f"============================================================\n")
-        f.write(f" STREAM ANALYSIS REPORT : {stream}\n")
-        f.write(f"============================================================\n\n")
+        f.write(f"# STREAM ANALYSIS REPORT: {stream}\n\n")
         
-        f.write(f"1. WRITE FREQUENCY HISTORY OVER THE ENTIRE SIMULATION :\n")
-        f.write(f"------------------------------------------------------------------\n")
-        f.write(f"Total files found : {len(files)}\n")
+        f.write(f"## 1. WRITE FREQUENCY HISTORY OVER THE ENTIRE SIMULATION\n")
+        f.write(f"- **Total files found:** {len(files)}\n\n")
         for h in freq_history:
             f.write(f"{h}\n")
             
-        f.write(f"\n2. VARIABLES CONTAINED IN THIS STREAM (from the last file) :\n")
-        f.write(f"-----------------------------------------------------------------\n")
-        f.write(f"{'Variable':<15} | {'Unit':<20} | {'Description (long_name)'}\n")
-        f.write("-" * 90 + "\n")
+        f.write(f"\n## 2. VARIABLES CONTAINED IN THIS STREAM (from the last file)\n\n")
+        f.write(f"| Variable | Unit | Description (long_name) |\n")
+        f.write(f"|---|---|---|\n")
         
         coords = ['lon', 'lat', 'time', 'x', 'y', 'iy', 'jx', 'kz', 'crs', 'time_bnds', 'lev']
         for vname, vinfo in vars_dict.items():
             # Skip pure coordinate/grid variables to only show physical variables
             if vname in coords:
                 continue
-            f.write(f"{vname:<15} | {vinfo['units']:<20} | {vinfo['long_name']}\n")
+            f.write(f"| {vname} | {vinfo['units']} | {vinfo['long_name']} |\n")
 
 for stream in streams:
     analyze_stream(stream)
