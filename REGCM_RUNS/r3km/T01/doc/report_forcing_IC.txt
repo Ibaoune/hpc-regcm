@@ -1,0 +1,85 @@
+============================================================
+ DOCUMENTATION DES FORÇAGES ET CONDITIONS INITIALES (IC/BC)
+============================================================
+
+1. CONDITIONS AUX LIMITES ET INITIALES (ICBC)
+---------------------------------------------
+Fichier analysé : test_001_ICBC.1999010100.nc
+Nombre total de fichiers ICBC trouvés : 73
+
+Métadonnées globales :
+  - title: ICTP Regional Climatic model V5" 
+  - institution: ICTP" 
+  - source: RegCM Model output file" 
+  - executable_date: Nov 16 2025" 
+  - Conventions: CF-1.10" 
+  - references: https://github.com/ICTP/RegCM" 
+  - model_revision: 2fda-dirty" 
+  - history: 2026-01-29 14:50:05 : Created by RegCM icbc program" 
+  - experiment: test_001" 
+  - projection: ROTLLR" 
+  - grid_size_in_meters: 3000. 
+  - latitude_of_projection_origin: 32.5 
+  - longitude_of_projection_origin: -12.5 
+  - index_of_projection_origin: 542., 460. 
+  - grid_north_pole_latitude: 57.5 
+  - grid_north_pole_longitude: 168. 
+  - grid_factor: 0. 
+  - zita_factor_a0: 0. 
+  - zita_height_top: 30000. 
+  - zita_atmosphere_h: 8000. 
+  - dynamical_core: 3 
+  - global_atm_source: ERA5" 
+
+Variables incluses dans le forçage :
+  a, b, rlon, rlat, xlon, xlat, mask, topo, ps, ts, ulon, ulat, vlon, vlat, t, qv, u, v
+
+Poids moyen par fichier mensuel : ~95 Go (d'après l'inventaire)
+
+============================================================
+2. FORÇAGE OCÉANIQUE (SST)
+---------------------------------------------
+Fichier analysé : test_001_SST.nc
+
+Métadonnées globales :
+  - title: ICTP Regional Climatic model V5" 
+  - institution: ICTP" 
+  - source: RegCM Model output file" 
+  - executable_date: Nov 16 2025" 
+  - Conventions: CF-1.10" 
+  - references: https://github.com/ICTP/RegCM" 
+  - model_revision: 2fda-dirty" 
+  - history: 2026-01-29 10:33:36 : Created by RegCM sst program" 
+  - experiment: test_001" 
+  - projection: ROTLLR" 
+  - grid_size_in_meters: 3000. 
+  - latitude_of_projection_origin: 32.5 
+  - longitude_of_projection_origin: -12.5 
+  - index_of_projection_origin: 542., 460. 
+  - grid_north_pole_latitude: 57.5 
+  - grid_north_pole_longitude: 168. 
+  - grid_factor: 0. 
+  - zita_factor_a0: 0. 
+  - zita_height_top: 30000. 
+  - zita_atmosphere_h: 8000. 
+  - dynamical_core: 3 
+  - sst_source: ERA5" 
+
+Variables incluses :
+  a, b, rlon, rlat, kz, xlon, xlat, mask, topo, sst
+
+============================================================
+3. SURFACE TERRESTRE (LANDUSE / TEXTURE)
+---------------------------------------------
+Fichiers binaires/texte utilisés :
+  - test_001_LANDUSE
+  - test_001_TEXTURE
+
+============================================================
+ RÉSUMÉ DE LA CONFIGURATION (d'après test_0010.in)
+============================================================
+  - ssttyp = 'ERA5'
+  - dattyp = 'ERA5'
+  - Date de début globale (gdate1) : 1999-01-01
+  - Date de fin globale (gdate2) : Varie selon la période
+  - Fréquence des conditions aux limites (ibdyfrq) : 6 heures

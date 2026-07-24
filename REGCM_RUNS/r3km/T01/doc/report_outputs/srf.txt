@@ -1,0 +1,82 @@
+============================================================
+ RAPPORT D'ANALYSE DU FLUX : SRF
+============================================================
+
+1. HISTORIQUE DE LA FRÉQUENCE D'ÉCRITURE SUR TOUTE LA SIMULATION :
+------------------------------------------------------------------
+Total des fichiers trouvés : 685
+-  454 fichiers pèsent environ  1 Go : Fréquence -> 6-heures (6h, 4 timesteps/fichier)
+-    1 fichiers pèsent environ  4 Go : Fréquence -> 18 timesteps/fichier
+-  230 fichiers pèsent environ  6 Go : Fréquence -> Horaire (1h, 24 timesteps/fichier)
+
+2. VARIABLES CONTENUES DANS CE FLUX (issues du dernier fichier) :
+-----------------------------------------------------------------
+Variable        | Unité                | Description (long_name)
+------------------------------------------------------------------------------------------
+a               | m"                   | vertical coordinate formula term a(k)" 
+b               | 1"                   | vertical coordinate formula term b(k)" 
+rlon            | degrees"             | longitude in rotated pole grid" 
+rlat            | degrees"             | latitude in rotated pole grid" 
+xlon            | degrees_east"        | Longitude on Cross Points" 
+xlat            | degrees_north"       | Latitude on Cross Points" 
+mask            | 1"                   | Land Mask" 
+topo            | m"                   | Surface Model Elevation" 
+areacella       | m2"                  | Land Area Fraction" 
+ps              | Pa"                  | Surface Pressure" 
+tau             | N m-2"               | Surface Downward Wind Stress" 
+ts              | K"                   | Surface Temperature" 
+tf              | K"                   | Foliage Canopy Temperature" 
+pr              | kg m-2 s-1"          | Precipitation" 
+evspsbl         | kg m-2 s-1"          | Evaporation" 
+snw             | kg m-2"              | Surface Snow Amount" 
+hfss            | W m-2"               | Surface Upward Sensible Heat Flux" 
+hfls            | W m-2"               | Surface Upward Latent Heat Flux" 
+rsnl            | W m-2"               | Net Upward Longwave Radiation" 
+rsns            | W m-2"               | Net Downward Shortwave Radiation" 
+rlus            | W m-2"               | Surface Upwelling Longwave Radiation" 
+rsus            | W m-2"               | Surface Upwelling Shortwave Flux" 
+rlds            | W m-2"               | Surface Downwelling Longwave Radiation" 
+rsds            | W m-2"               | Surface Downwelling Shortwave Flux" 
+zmla            | m"                   | Boundary Layer Thickness" 
+aldirs          | 1"                   | Surface Albedo to Direct Shortwave Radiation" 
+aldifs          | 1"                   | Surface Albedo to Diffuse Shortwave Radiation" 
+sund            | s"                   | Duration of Sunshine" 
+seaice          | m"                   | Sea ice cover" 
+snm             | kg m-2 s-1"          | Surface Snow Melt" 
+mdew            | kg m-2 s-1"          | Surface Deposition" 
+mrros           | kg m-2 s-1"          | Surface Runoff" 
+mrro            | kg m-2 s-1"          | Total Runoff" 
+ustar           | s-1"                 | Surface Friction Velocity" 
+zo              | m"                   | Surface Roughness Length" 
+rhoa            | kg m-3"              | Surface Air Density" 
+clt             | %"                   | Total Cloud Fraction" 
+sfcWind         | m/s"                 | Near-Surface Wind Speed" 
+tauu            | Pa"                  | Surface Downward Grid Eastward Wind Stress" 
+tauv            | Pa"                  | Surface Downward Grid Northward Wind Stress" 
+psl             | Pa"                  | Sea Level Pressure" 
+evspsblpot      | kg m-2 s-1"          | Potential Evapotranspiration" 
+prsn            | kg m-2 s-1"          | Snowfall flux" 
+mrsos           | kg m-2"              | Moisture in Upper Portion of Soil Column" 
+heatindex       | K"                   | Heat Index (Lu & Romps, Extending the Heat Index, JAMC, 2022)" 
+uas             | m s-1"               | Grid Eastward Near-Surface Wind" 
+vas             | m s-1"               | Grid Northward Near-Surface Wind" 
+tas             | K"                   | Near-Surface Air Temperature" 
+huss            | 1"                   | Near-Surface Specific Humidity" 
+hurs            | %"                   | Near-Surface Relative Humidity" 
+mrsol           | kg m-2"              | Total Water Content of Soil Layer" 
+tsl             | K"                   | Temperature of the Soil" 
+ua50m           | m/s"                 | Grid Eastward Wind at 50m" 
+va50m           | m/s"                 | Grid Northward Wind at 50m" 
+ta50m           | K"                   | Air Temperature at 50m" 
+hus50m          | 1"                   | Specific Humidity at 50m" 
+ua100m          | m/s"                 | Grid Eastward Wind at 100m" 
+va100m          | m/s"                 | Grid Northward Wind at 100m" 
+ua150m          | m/s"                 | Grid Eastward Wind at 150m" 
+va150m          | m/s"                 | Grid Northward Wind at 150m" 
+m2              | m"                   | Height level" 
+m10             | m"                   | Height level" 
+m50             | m"                   | Height level" 
+m100            | m"                   | Height level" 
+m150            | m"                   | Height level" 
+soil_layer      | m"                   | Soil layer level" 
+soil_bounds     | m"                   | Soil layer level bounds" 

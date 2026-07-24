@@ -1,4 +1,10 @@
 #!/bin/bash
+# ==============================================================================
+# Script Name: job.sh
+# Description: Slurm job submission script for RegCM simulation
+# Author: M. El Aabaribaoune (@um6p)
+# Note: This is an HPC-specific extension developed for managing RegCM simulations
+# ==============================================================================
 ######################
 ## TOUBKAL    UM6P ##
 ######################
@@ -43,10 +49,10 @@ export UCX_RC_TIMEOUT=20
 
 # Check if the run was successful
 if [ $? -eq 0 ]; then
-    echo "Run terminé avec succès. Lancement de l'étape suivante..." >> $OUT_FILE
+    echo "Run finished successfully. Launching the next step..." >> $OUT_FILE
     mv $OUT_FILE logs/RegCM_Mor_28nds_${SLURM_JOB_ID}_SUCCESS.log
     ./run_chain.py >> logs/RegCM_Mor_28nds_${SLURM_JOB_ID}_SUCCESS.log 2>&1
 else
-    echo "Erreur pendant le run. Le chaînage est stoppé." >> $OUT_FILE
+    echo "Error during the run. Chaining is stopped." >> $OUT_FILE
     mv $OUT_FILE logs/RegCM_Mor_28nds_${SLURM_JOB_ID}_FAILED.log
 fi

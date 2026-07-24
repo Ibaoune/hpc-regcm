@@ -1,52 +1,105 @@
-# Projet RegCM - Modélisation Climatique Régionale (Maroc)
+# RegCM Project - Regional Climate Modeling (Morocco)
 
-Ce dépôt contient l'environnement d'exécution, la configuration et les scripts pour les simulations climatiques régionales sur le Maroc à l'aide du modèle **RegCM** (v4.5).
+**Author**: M. El Aabaribaoune (@um6p)
 
-## 🌍 Région Simulée
-La simulation cible le Maroc et ses environs avec une haute résolution spatiale.
-- **Résolution** : 3.0 km (`ds = 3.0`)
-- **Grille** : 920 x 1084 (`iy = 920`, `jx = 1084`), 50 niveaux verticaux (`kz = 50`)
-- **Centre du domaine** : Latitude 32.50° N (`clat`), Longitude -12.50° E (`clon`)
-- **Projection** : Rotated Lat/Lon (`ROTLLR`)
+This repository hosts the runtime environment, configuration, and automation tools developed to perform high-resolution regional climate simulations over Morocco. It relies on the **RegCM** (v4.5) regional climate model and integrates specific developments to optimize its execution on the local HPC infrastructure (Toubkal cluster).
 
-## 📂 Organisation du Projet
+## Project Description
 
-Le projet est structuré pour gérer de grands volumes de données en environnement HPC (Lustre) :
+The primary objective is to simulate the climate of Morocco with a very fine spatial resolution of 3 km. The repository is structured to manage large volumes of data on a Lustre file system, and includes automated processing chains for launching, tracking, and producing simulation reports.
 
-- `README.md` : Ce fichier de documentation.
-- `.gitignore` : Ignore tous les fichiers lourds (NetCDF, logs, données).
-- `REGCM_RUNS/` : Dossier principal contenant les expériences.
-  - `r3km/` : Simulations à 3 km de résolution.
-    - `T01/` : Run de production principal. Contient le `job.sh` et la configuration.
-    - `T00_IC/` : Conditions initiales.
-- `REGCM_GLOBEDAT/` : Données globales d'entrée (non versionné).
-- `SRC_REGCM/` : Code source de RegCM, spécifiquement `RegCM-CLM45` (non versionné ici).
-- `simus_from_Graziano/` : Simulations de référence (non versionné).
+### Simulation Characteristics
+- **Resolution**: 3.0 km (`ds = 3.0`)
+- **Grid**: 920 x 1084 (`iy = 920`, `jx = 1084`), 50 vertical levels (`kz = 50`)
+- **Domain Center**: Latitude 32.50 N (`clat`), Longitude -12.50 E (`clon`)
+- **Projection**: Rotated Lat/Lon (`ROTLLR`)
 
-## ⚙️ Configuration Principale (`test_0010.in`)
-Le fichier `REGCM_RUNS/r3km/T01/test_0010.in` contrôle le comportement du modèle.
-### Fréquences d'écriture :
-- **ATM (Champs 3D)** : Toutes les 6 heures (`atmfrq = 6.0`)
-- **RAD (Radiations)** : Toutes les 6 heures (`radfrq = 6.0`)
-- **SRF (Surface)** : Toutes les 1 heures (`srffrq = 1.0`) - *Attention, très gourmand en espace*
-- **SHF (Flux surface)** : Toutes les 1 heures (suit `srffrq`)
-- **STS (Statistiques)** : Moyennes/Extrêmes journaliers (1 fichier/jour)
+---
 
-*Note : La variable `outnwf = 1.0` indique que le modèle génère **1 fichier par jour** pour ces variables.*
+## Component Distinction (Important)
 
-## 🚀 Exécution d'une Simulation
-Le projet utilise le gestionnaire de tâches SLURM sur le cluster Toubkal.
+This repository centralizes two types of components that must be clearly distinguished:
 
-1. **Préparation** : Vérifiez que vos modules sont corrects (GCC, OpenMPI, netCDF, HDF5).
-2. **Soumission** :
+### 1. Official RegCM Code
+The source code and executables of the RegCM model come from the official RegCM development team (ICTP).
+- **`SRC_REGCM/`**: Contains the original RegCM source code (e.g., `RegCM-CLM45`). *These elements are not versioned in this GitHub repository to avoid duplicating the official work.*
+- **Configuration**: The input files (`.in` such as `test_0010.in`) are specifically configured for our domains, but use the official RegCM format.
+
+### 2. HPC Specific Extensions (Our Development)
+These elements are the core of this GitHub repository. They are custom developments for our infrastructure to automate and manage simulations on the cluster:
+- **Slurm Submission Scripts**: `job.sh` and `job_createInitialState.sh` files to allocate and use cluster nodes.
+- **Python Automation Tools**: 
+  - `run_chain.py`: Python automatic chaining script allowing the sequential submission of jobs over long periods without manual intervention.
+- **Report Generation (`doc/`)**: Python scripts (`generate_report.py`, `generate_forcing_report.py`, etc.) to automatically generate detailed scientific reports (.md, .pdf) on the progress and validation of the simulations.
+- **File Management**: Directory structure (`REGCM_RUNS/`) and purge system (via `.gitignore` and scripts) adapted to Lustre system constraints.
+
+---
+
+## Prerequisites and Dependencies
+
+To use this environment on the HPC cluster, ensure you load the following modules:
+- Compilers and MPI: **GCC**, **OpenMPI**
+- Scientific libraries: **NetCDF**, **HDF5**
+- Python Environment: **Python 3** (for executing `run_chain.py` and report generation)
+
+---
+
+## Directory Organization
+
+```text
+.
+├── README.md                           # Main documentation (this file)
+├── .gitignore                          # Git exclusions (large data files, logs)
+├── REGCM_RUNS/                         # Main directory containing experiments
+│   └── r3km/                           # Simulations at 3 km resolution
+│       ├── T00_IC/                     # Initial conditions and forcings (input files)
+│       └── T01/                        # Main production simulation
+│           ├── job.sh                  # Main Slurm submission script
+│           ├── run_chain.py            # Simulation chain automation tool
+│           ├── test_0010.in            # Model configuration file
+│           ├── doc/                    # Report generation tools (HPC specific)
+│           ├── logs/                   # Slurm output logs
+│           ├── archive_periods/        # Data archives by periods (ignored by Git)
+│           ├── input/                  # Input data (content ignored by Git)
+│           └── output/                 # Model results (content ignored by Git)
+├── REGCM_GLOBEDAT/                     # Global input data (not versioned)
+└── SRC_REGCM/                          # Official RegCM source code (not versioned)
+```
+
+---
+
+## Installation and Usage Instructions
+
+1. **Environment Preparation**
+   Load the necessary modules on your HPC environment:
+   ```bash
+   module load gcc openmpi netcdf hdf5 python
+   ```
+
+2. **Generation of Initial Conditions**
+   ```bash
+   cd REGCM_RUNS/r3km/T00_IC
+   sbatch job_createInitialState.sh
+   ```
+
+3. **Launching the Simulation**
+   To run a single period:
    ```bash
    cd REGCM_RUNS/r3km/T01
    sbatch job.sh
    ```
-3. **Ressources allouées** : 28 nœuds x 32 tâches (896 cœurs MPI).
-4. **Logs** : Les logs SLURM se trouvent dans `REGCM_RUNS/r3km/T01/logs/`.
+   *Default allocated resources: 28 nodes x 32 tasks (896 MPI cores).*
 
-## 🧹 Bonnes Pratiques
-- **Espace disque** : Les sorties génèrent environ **1.4 To par mois simulé**. Surveillez votre quota Lustre.
-- **Git** : N'ajoutez **jamais** de fichiers `.nc` (NetCDF) ou `.tmp` au dépôt Git. Le `.gitignore` est configuré pour les bloquer.
-- **Nettoyage** : Purgez régulièrement les anciens fichiers de logs et les fichiers temporaires.
+4. **Automation (Period Chaining)**
+   To run the simulation continuously by chaining periods:
+   ```bash
+   python3 run_chain.py
+   ```
+
+---
+
+## Best Practices and Alerts
+
+- **Disk Space**: The file writing frequency generates approximately **1.4 TB per simulated month** (`srffrq = 1.0`). Carefully monitor your Lustre quota.
+- **Git**: The `.gitignore` file is strictly configured to block large files (`.nc`, `.grib`, `.tar`, etc.). **Never force** the addition of these data files into the repository. Only tool source code and configurations should be tracked.
+- **Cleanup**: Regularly purge `logs/` directories and transfer files from the `output/` section to cold storage if necessary.

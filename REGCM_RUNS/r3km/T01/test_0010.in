@@ -1,0 +1,118 @@
+ &dimparam
+ iy     = 920,
+ jx     = 1084,
+ kz     = 50,
+ /
+ &coreparam
+ idynamic = 3,
+ /
+ &geoparam
+ iproj = 'ROTLLR',
+ ds = 3.0,
+ clat = 32.50,
+ clon = -12.50,
+ plat = 57.50,
+ plon = 168.00,
+ /
+ &terrainparam
+ domname = 'test_001',
+ lakedpth = .false.,
+ fudge_lnd   = .false.,
+ fudge_lnd_s = .false.,
+ fudge_tex   = .false.,
+ fudge_tex_s = .false.,
+ dirter = '/srv/lustre01/project/climat-um6p-st-iwri-7ksifkvwkuy/users/mohammad.elaabaribao/RegCM/REGCM_RUNS/r3km/T00_IC/input',
+ inpter = '/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/REGCM/data/REGCM_GLOBEDAT',
+ /
+ &boundaryparam
+ nspgx  = 31,
+ nspgd  = 31,
+ high_nudge =    6.0D0,
+ medium_nudge =  4.0D0,
+ low_nudge =     2.0D0
+ /
+ &cldparam
+ ncld      = 0,
+ /
+ &globdatparam
+ ibdyfrq = 6,
+ ssttyp = 'ERA5',
+ dattyp = 'ERA5',
+ gdate1 = 1999010100,
+ gdate2 = 2010010100,
+ calendar = 'gregorian',
+ dirglob = '/srv/lustre01/project/climat-um6p-st-iwri-7ksifkvwkuy/users/mohammad.elaabaribao/RegCM/REGCM_RUNS/r3km/T00_IC/input',
+ inpglob = '/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/REGCM/data/REGCM_GLOBEDAT',
+ /
+ &restartparam
+ ifrest  = .true.,   ! If a restart
+ mdate0  = 1999010100, ! Global start (is globidate1)
+ mdate1  = 2000111500, ! Start date of this run
+ mdate2  = 2000113000, ! End date for this run
+ /
+ &timeparam
+ dt     =    30,
+ dtabem =     1
+ /
+ &outparam
+ outnwf  = 1.0,
+ ifsave  = .true. ,
+ savfrq  =    0.,
+ ifatm  = .true. ,
+ atmfrq  =     6.,
+ ifrad   = .true. ,
+ radfrq  =     6.,
+ ifsts   = .true. ,
+ ifshf   = .true. ,
+ ifsrf   = .true. ,
+ srffrq  =     1., 
+ ifsub   = .true. ,
+ subfrq  =     6.,
+ iflak   = .true.,
+ lakfrq  =     6.,
+ ifchem  = .true.,
+ ifopt   = .false.,
+ chemfrq =     6.,
+ dirout  = '/srv/lustre01/project/climat-um6p-st-iwri-7ksifkvwkuy/users/mohammad.elaabaribao/RegCM/REGCM_RUNS/r3km/T01/output',
+ lsync   = .true.,
+ do_parallel_netcdf_in  = .true.,
+ do_parallel_netcdf_out = .false.,
+ icosp = 1,
+ idiag = 1,
+ /
+!
+! Model Physics
+!
+ &physicsparam
+ iboudy  =          5,
+ ibltyp  =          1,
+ icup_lnd =         0,
+ icup_ocn =         0,
+ ipptls  =          2,
+ iwavcpl =          0,
+ iocnflx =          2,
+   iocnrough =      1,
+   iocnzoq =        1,
+ 
+ idcsst   =          0,
+ iseaice  =          1,
+ iconvlwp =          1,
+ icldfrac =          0,
+
+
+
+
+ /
+ &clm_inparm
+ fpftcon = 'pft-physiology.c130503.nc',
+ fsnowoptics = 'snicar_optics_5bnd_c090915.nc',
+ fsnowaging = 'snicar_drdt_bst_fit_60_c070416.nc',
+ urban_hac = 'ON_WASTEHEAT',
+ /
+ &clm_soilhydrology_inparm
+ h2osfcflag = 1,
+ origflag = 0,
+ /
+ &clm_hydrology1_inparm
+ oldfflag = 0,
+ /

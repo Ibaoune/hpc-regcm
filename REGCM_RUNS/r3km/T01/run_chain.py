@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
+# ==============================================================================
+# Script Name: run_chain.py
+# Description: Automatic chaining script for sequential job submission
+# Author: M. El Aabaribaoune (@um6p)
+# Note: This is an HPC-specific extension developed for managing RegCM simulations
+# ==============================================================================
+
 import sys
 import os
 import subprocess
 from datetime import datetime, timedelta
 
 # ==========================================
-# CONFIGURATION DU CHAÎNAGE
+# CHAINING CONFIGURATION
 # ==========================================
-MDATE0 = "1999010100"       # Date globale de début (et date du 1er run)
-MDATE_FINAL = "2010010100"  # Date d'arrêt globale de la simulation
-PERIOD_LENGTH = "1M"        # "1M" (1 mois), "1D" (1 jour), etc.
+MDATE0 = "1999010100"       # Global start date (and date of the 1st run)
+MDATE_FINAL = "2010010100"  # Global end date of the simulation
+PERIOD_LENGTH = "15D"        # "1M" (1 month), "1D" (1 day), "15D" (15 days), etc.
 
 TEMPLATE = "templates/test_0010.template.in"
 OUTPUT_IN = "test_0010.in"
@@ -30,12 +37,14 @@ def add_period(dt_str, period):
         return dt.replace(year=year, month=month).strftime("%Y%m%d%H")
     elif period == '1D':
         return (dt + timedelta(days=1)).strftime("%Y%m%d%H")
+    elif period == '15D':
+        return (dt + timedelta(days=15)).strftime("%Y%m%d%H")
     else:
-        raise ValueError(f"Period {period} non supportée.")
+        raise ValueError(f"Unsupported period {period}.")
 
 def main():
     if not os.path.exists(STATE_FILE):
-        print(f"Initialisation : Création du premier fichier {OUTPUT_IN} à partir de {MDATE0}")
+        print(f"Initialization: Creating the first {OUTPUT_IN} file starting from {MDATE0}")
         mdate1 = MDATE0
         ifrest = ".false."
     else:
@@ -44,7 +53,7 @@ def main():
         ifrest = ".true."
 
     if mdate1 >= MDATE_FINAL:
-        print(f"SUCCESS: Simulation terminée ! La date finale {MDATE_FINAL} a été atteinte.")
+        print(f"SUCCESS: Simulation finished! The final date {MDATE_FINAL} has been reached.")
         return
 
     mdate2 = add_period(mdate1, PERIOD_LENGTH)
@@ -52,7 +61,7 @@ def main():
     if mdate2 > MDATE_FINAL:
         mdate2 = MDATE_FINAL
 
-    print(f"-> Configuration pour la période : {mdate1} à {mdate2}")
+    print(f"-> Configuration for the period: {mdate1} to {mdate2}")
 
     with open(TEMPLATE, "r") as f:
         content = f.read()
@@ -66,16 +75,16 @@ def main():
     with open(OUTPUT_IN, "w") as f:
         f.write(content)
 
-    # On sauvegarde l'état pour le PROCHAIN lancement
+    # Save the state for the NEXT run
     with open(STATE_FILE, "w") as f:
         f.write(mdate2)
 
-    # Si on est en mode initialisation, on ne soumet pas
+    # If running in init mode, do not submit
     if len(sys.argv) > 1 and sys.argv[1] == "--init":
-        print(f"Mode --init terminé. Fichier {OUTPUT_IN} généré.")
-        print(f"Veuillez lancer 'sbatch {JOB_SCRIPT}' pour démarrer le chaînage.")
+        print(f"--init mode finished. {OUTPUT_IN} file generated.")
+        print(f"Please run 'sbatch {JOB_SCRIPT}' to start the chaining process.")
     else:
-        print(f"Soumission automatique de {JOB_SCRIPT}...")
+        print(f"Automatically submitting {JOB_SCRIPT}...")
         subprocess.run(["sbatch", JOB_SCRIPT])
 
 if __name__ == "__main__":

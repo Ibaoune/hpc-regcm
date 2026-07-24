@@ -1,9 +1,25 @@
 # Ignorer tous les dossiers de données et de résultats
-REGCM_RUNS/*/output/
-REGCM_RUNS/*/input/
+archive_to_delete_once_checked/
+REGCM_RUNS/**/output/*
+!REGCM_RUNS/**/output/.gitkeep
+REGCM_RUNS/**/input/*
+!REGCM_RUNS/**/input/.gitkeep
+REGCM_RUNS/**/archive_periods/
 REGCM_GLOBEDAT/
 simus_from_Graziano/
+
+# Ignorer les fichiers volumineux de données
 *.nc
+*.grib
+*.grd
+*.tar
+*.tar.gz
+*.zip
+*.bz2
+*.7z
+*.h5
+
+# Fichiers temporaires et de logs
 *.tmp
 *.log
 *.err
