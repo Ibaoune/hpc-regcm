@@ -73,7 +73,7 @@ To use this environment on the HPC cluster, ensure you load the following module
 1. **Environment Preparation**
    Load the necessary modules on your HPC environment:
    ```bash
-   module load gcc openmpi netcdf hdf5 python
+   source SRC_REGCM/arch_RegCM4.5_Tbkl.env
    ```
 
 2. **Generation of Initial Conditions**
@@ -100,6 +100,5 @@ To use this environment on the HPC cluster, ensure you load the following module
 
 ## Best Practices and Alerts
 
-- **Disk Space**: The file writing frequency generates approximately **1.4 TB per simulated month** (`srffrq = 1.0`). Carefully monitor your Lustre quota.
 - **Git**: The `.gitignore` file is strictly configured to block large files (`.nc`, `.grib`, `.tar`, etc.). **Never force** the addition of these data files into the repository. Only tool source code and configurations should be tracked.
 - **Cleanup**: Regularly purge `logs/` directories and transfer files from the `output/` section to cold storage if necessary.
