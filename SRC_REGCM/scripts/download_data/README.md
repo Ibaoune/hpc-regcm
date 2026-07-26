@@ -1,5 +1,7 @@
 # SRC_REGCM / scripts / download_data
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 Contains automated bash scripts designed to interface with external climate data repositories (like ECMWF or ICTP servers) to download the necessary global forcing datasets required to run RegCM.
 

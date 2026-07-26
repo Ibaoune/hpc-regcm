@@ -1,5 +1,7 @@
 # T01 / doc / scripts
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 Contains Python scripts designed to extract metadata, performance metrics, and variable lists from the RegCM model outputs and logs.
 

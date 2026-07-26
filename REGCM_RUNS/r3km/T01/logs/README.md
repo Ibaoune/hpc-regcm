@@ -1,5 +1,7 @@
 # T01 / logs
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 This directory captures the `stdout` and `stderr` streams from SLURM during job execution.
 

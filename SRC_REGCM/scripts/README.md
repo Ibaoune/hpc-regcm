@@ -1,5 +1,7 @@
 # SRC_REGCM / scripts
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 Contains high-level utility scripts used across the project to manage data extraction, merging, and environment preparation.
 

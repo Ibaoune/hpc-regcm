@@ -1,5 +1,7 @@
 # SRC_REGCM / scripts / build_regcm
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 A collection of bash scripts strictly dedicated to the configuration, compilation, and environment setup of the RegCM source code.
 

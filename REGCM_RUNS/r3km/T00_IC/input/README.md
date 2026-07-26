@@ -1,5 +1,7 @@
 # T00_IC / input
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 This directory serves as the landing zone for the raw global forcing data (e.g., global ERA-Interim data, raw topography datasets, and raw SST files) downloaded via the `SRC_REGCM/scripts/download_data` scripts. 
 

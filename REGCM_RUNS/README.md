@@ -1,5 +1,7 @@
 # REGCM_RUNS Directory
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**: 
 This is the central workspace for all high-resolution RegCM simulations. It organizes model configurations, inputs, outputs, and execution scripts by spatial resolution and domain.
 

@@ -1,5 +1,7 @@
 # SRC_REGCM: Adapted Source Code & Build Environment
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 This directory houses the highly customized version of the RegCM model source code (`RegCM-Toubkal`) that has been optimized for the Toubkal HPC architecture. It contains the code itself, environment files, and compilation scripts.
 

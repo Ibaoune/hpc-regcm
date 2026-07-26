@@ -1,5 +1,7 @@
 # T01 / output
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 This is the primary destination directory for all variables calculated and outputted by the RegCM model run.
 

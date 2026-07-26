@@ -1,5 +1,7 @@
 # T01 / templates
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 This directory stores template files that are read and dynamically modified by Python automation scripts.
 

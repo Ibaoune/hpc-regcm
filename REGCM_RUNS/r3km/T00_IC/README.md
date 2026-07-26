@@ -1,5 +1,7 @@
 # T00_IC: Pre-processing & Initial Conditions
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 This phase is responsible for taking raw global boundary conditions (like ERA-Interim, SST) and interpolating them onto the 3 km Morocco grid to create the Initial Conditions (IC) and Boundary Conditions (BC).
 

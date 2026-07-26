@@ -1,5 +1,7 @@
 # T01: Main Production Run
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 **Overview**:
 This is the core working directory for the actual execution of the RegCM climate model (model integration) at the 3 km resolution. It contains the execution logic, the main physics configuration, and automation scripts for continuous chaining.
 
