@@ -26,7 +26,6 @@ simus_from_Graziano/
 *.out
 
 # Ignorer les exécutables et dossiers de compilation du code source
-SRC_REGCM/
 GitRepoRegCMIWRI/
 bin/
 *.o

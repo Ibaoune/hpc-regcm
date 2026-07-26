@@ -20,9 +20,9 @@ The primary objective is to simulate the climate of Morocco with a very fine spa
 
 This repository centralizes two types of components that must be clearly distinguished:
 
-### 1. Official RegCM Code
-The source code and executables of the RegCM model come from the official RegCM development team (ICTP).
-- **`SRC_REGCM/`**: Contains the original RegCM source code (e.g., `RegCM-CLM45`). *These elements are not versioned in this GitHub repository to avoid duplicating the official work.*
+### 1. Adapted RegCM-Toubkal Source Code
+The source code and executables of the RegCM model have been specially adapted for our architecture.
+- **`SRC_REGCM/`**: Contains the adapted `RegCM-Toubkal` source code and environment scripts (`arch_RegCM4.5_Tbkl.env`, `compile_regcm.sh`) necessary for compiling the model on the Toubkal cluster. *Binaries and compiled objects are ignored in Git.*
 - **Configuration**: The input files (`.in` such as `test_0010.in`) are specifically configured for our domains, but use the official RegCM format.
 
 ### 2. HPC Specific Extensions (Our Development)
