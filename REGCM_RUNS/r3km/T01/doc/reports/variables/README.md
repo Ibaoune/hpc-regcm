@@ -1,3 +1,4 @@
-# Variables Documentation
+# T01 / doc / reports / variables
 
-This subdirectory contains specific documentation or mappings related to the RegCM output variables (e.g., ATM, RAD, SRF) analyzed in the reports.
+**Overview**:
+Contains detailed documentation, mappings, or lookup tables describing the physical meaning, units, and source of the NetCDF variables outputted by RegCM (e.g., distinguishing between different convective precipitation outputs or radiation fluxes).

@@ -1,5 +1,8 @@
-# r3km Simulation Directory
+# r3km Simulation Domain
 
-This directory contains the configurations and executions for the very high-resolution 3 km RegCM simulation over Morocco. It is divided into distinct phases:
-- **`T00_IC/`**: For generating Initial and Boundary Conditions (ICBC).
-- **`T01/`**: For running the main, long-term climate simulation.
+**Overview**: 
+This directory holds the complete pipeline for the 3 km spatial resolution climate simulation over Morocco.
+
+**Structure**:
+- **`T00_IC/`**: The initial conditions and boundary conditions (ICBC) generation phase.
+- **`T01/`**: The main production run phase (model integration).

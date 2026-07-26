@@ -1,3 +1,6 @@
-# T00_IC Input Data
+# T00_IC / input
 
-This directory is used for staging the raw global forcing datasets (e.g., ERA-Interim, SST data) required to generate the RegCM Initial and Boundary Conditions. Ignored by Git.
+**Overview**:
+This directory serves as the landing zone for the raw global forcing data (e.g., global ERA-Interim data, raw topography datasets, and raw SST files) downloaded via the `SRC_REGCM/scripts/download_data` scripts. 
+
+The executables in `T00_IC` will read from this directory to generate the high-resolution initial conditions. Due to the large size of these global files, the contents of this directory are ignored by Git.

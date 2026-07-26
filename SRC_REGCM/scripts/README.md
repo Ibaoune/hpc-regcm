@@ -1,3 +1,11 @@
-# Utility Scripts
+# SRC_REGCM / scripts
 
-This directory contains various utility shell scripts used to build the RegCM environment, prepare inputs, and download external forcing data.
+**Overview**:
+Contains high-level utility scripts used across the project to manage data extraction, merging, and environment preparation.
+
+**Files**:
+- **`extract_and_merge.sh`**: A shell script likely used to stitch together NetCDF files across time periods or extract specific domains/variables using tools like CDO (Climate Data Operators) or NCO (NetCDF Operators).
+
+**Structure**:
+- **`build_regcm/`**: Scripts specific to compiling the model.
+- **`download_data/`**: Scripts specific to acquiring boundary condition data.

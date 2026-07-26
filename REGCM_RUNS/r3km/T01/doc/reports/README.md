@@ -1,3 +1,7 @@
-# Simulation Reports
+# T01 / doc / reports
 
-This directory stores the generated reports (.md, .pdf) summarizing the simulation's progress, physical interpretations, and resource usage metrics.
+**Overview**:
+The final destination for all automatically generated technical reports. This includes regular progress summaries (like `report_scenarios.md`) that document what has been simulated, performance bottlenecks, and disk quota consumption.
+
+**Structure**:
+- **`variables/`**: A subdirectory dedicated to documenting specific model variables.
