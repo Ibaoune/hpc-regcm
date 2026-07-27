@@ -1,5 +1,7 @@
 # RegCM T01 (Morocco 3km) - OUTPUT STORAGE ASSESSMENT
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 - **Grid:** 920 x 1084 x 50
 - **Model time step:** 30 seconds
 - **Simulation period:** 1999-01-01 to 2010-01-01 (11 years)

@@ -37,7 +37,7 @@ These elements are the core of this GitHub repository. They are custom developme
 
 ## Prerequisites and Dependencies
 
-To use this environment on the HPC cluster, ensure you load the following modules:
+To use this environment on the HPC cluster, ensure we load the following modules:
 - Compilers and MPI: **GCC**, **OpenMPI**
 - Scientific libraries: **NetCDF**, **HDF5**
 - Python Environment: **Python 3** (for executing `run_chain.py` and report generation)
@@ -71,7 +71,7 @@ To use this environment on the HPC cluster, ensure you load the following module
 ## Installation and Usage Instructions
 
 1. **Environment Preparation**
-   Load the necessary modules on your HPC environment:
+   Load the necessary modules on our HPC environment:
    ```bash
    source SRC_REGCM/arch_RegCM4.5_Tbkl.env
    ```

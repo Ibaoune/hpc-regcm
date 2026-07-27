@@ -1,6 +1,6 @@
 ---
 title: "Rapport de Simulation : RegCM T01 (Maroc 3km)"
-author: "mohammad.elaabaribao"
+author: "M. El Aabaribaoune (@um6p)"
 date: "21 Juillet 2026"
 geometry: margin=2cm
 ---

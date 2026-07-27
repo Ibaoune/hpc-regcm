@@ -1,5 +1,7 @@
 # SCENARIOS AND STORAGE STRATEGY (2001 - 2004)
 
+**Author**: M. El Aabaribaoune (@um6p)
+
 This document explains what was done during the 1999-2000 period, how it impacts storage, and proposes concrete scenarios to successfully run the next 4 years (2001 to 2004 inclusive) within the remaining 47 TB quota.
 
 ## 1. WHAT WE DID FOR 1999 - 2000
@@ -17,7 +19,7 @@ For the ~2 years already completed (1999 and 2000), we have generated nearly 30 
 ---
 
 ## 2. THE CHALLENGE FOR 2001 - 2004
-You want to simulate 4 additional years (2001, 2002, 2003, 2004).
+We aim to simulate 4 additional years (2001, 2002, 2003, 2004).
 
 - **Current Free Space:** ~47 TB
 - **Space required with current config (14.7 TB/year * 4 years):** ~58.8 TB
@@ -70,4 +72,4 @@ To safely launch the period 2001-2004, here is the exact procedure we recommend:
    ```
 3. **Leave everything else as it is:** Keep `srffrq = 1.` and `ifsts = .true.` to retain high-resolution surface data.
 4. **Restart the Job Chaining:**
-   You can now safely restart your simulation for 2001. The output files will be significantly lighter, the model will run slightly faster (less I/O time writing to Lustre), and we are guaranteed not to crash the server due to space limits before 2005.
+   We can now safely restart the simulation for 2001. The output files will be significantly lighter, the model will run slightly faster (less I/O time writing to Lustre), and we are guaranteed not to crash the server due to space limits before 2005.
