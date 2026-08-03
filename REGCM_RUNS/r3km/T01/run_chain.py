@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 # CHAINING CONFIGURATION
 # ==========================================
 MDATE0 = "1999010100"       # Global start date (and date of the 1st run)
-MDATE_FINAL = "2001022800"  # Stop here to optimize configuration before continuing
+MDATE_FINAL = "2004010100"  # Run until end of 2003
 PERIOD_LENGTH = "15D"        # "1M" (1 month), "1D" (1 day), "15D" (15 days), etc.
 
 TEMPLATE = "templates/test_0010.template.in"
