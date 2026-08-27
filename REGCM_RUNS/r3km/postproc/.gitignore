@@ -3,6 +3,8 @@ data/
 results/*
 !results/*/
 !results/**/*.png
+!results/**/*.pdf
+!results/**/*.csv
 reports/
 *.pid
 __pycache__/
