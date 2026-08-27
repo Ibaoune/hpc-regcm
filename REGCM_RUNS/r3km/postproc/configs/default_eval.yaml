@@ -1,0 +1,145 @@
+# ==============================================================================
+# Configuration YAML pour le Post-traitement et l'Évaluation RegCM
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. PARAMÈTRES GÉNÉRAUX
+# ------------------------------------------------------------------------------
+general:
+  sim_root: "../../"                 # Relatif à l'emplacement d'exécution (r3km/postproc)
+  sim_name: "T01"
+  spinup_year: 1999
+  year_start: 2000
+  year_end: 2000
+  domain_bbox: [-18.0, 1.5, 21.0, 36.5]  # [lon_min, lon_max, lat_min, lat_max]
+  seasons:
+    DJF: [12, 1, 2]
+    MAM: [3, 4, 5]
+    JJA: [6, 7, 8]
+    SON: [9, 10, 11]
+
+# ------------------------------------------------------------------------------
+# 2. ACTIVATION DES MODULES
+# ------------------------------------------------------------------------------
+modules:
+  do_preprocess: true      # 01_preprocess.py
+  do_regrid: true          # 02_regrid.py
+  do_climatology: true     # 03_climatology_maps.py
+  do_bias_maps: true       # 04_bias_maps.py
+  do_timeseries: true      # 05_seasonal_cycle.py
+  do_taylor: true          # 06_taylor_diagram.py
+  do_metrics_table: true   # 07_metrics_table.py
+
+# ------------------------------------------------------------------------------
+# 3. OPTIONS VISUELLES GLOBALES
+# ------------------------------------------------------------------------------
+visuals:
+  dpi: 150
+  format: "png"
+  style: "seaborn-whitegrid"
+
+# ------------------------------------------------------------------------------
+# 4. VARIABLES ET LEURS CONFIGURATIONS
+# ------------------------------------------------------------------------------
+variables:
+  # PRECIPITATION
+  pr:
+    active: true
+    obs:
+      path: "../data/CHIRPS/chirps_2000.nc"
+      var: "precip"
+      label: "CHIRPS"
+      units_in: "mm/day"
+      units_out: "mm d-1"
+      lat_name: "latitude"
+      lon_name: "longitude"
+      time_name: "time"
+      time_units: "days since 1980-01-01"
+      fill_val: -9999.0
+    model:
+      stream: "STS"
+      var: "pr"
+      label: "RegCM-r3km"
+      long_name: "Precipitation"
+      units_in: "kg m-2 s-1"
+      units_out: "mm d-1"
+      scale: 86400.0
+      offset: 0.0
+      has_lev: false
+    visuals:
+      cmap: "YlGnBu"
+      cmap_bias: "BrBG"
+      vmin: 0
+      vmax: 10
+      bias_vmin: -5
+      bias_vmax: 5
+      color_model: "tab:orange"
+      color_obs: "tab:blue"
+
+  # MAXIMUM TEMPERATURE
+  tasmax:
+    active: true
+    obs:
+      path: "../data/CPC/tmax.2000.nc"
+      var: "tmax"
+      label: "CPC"
+      units_in: "degC"
+      units_out: "degC"
+      lat_name: "lat"
+      lon_name: "lon"
+      time_name: "time"
+      time_units: "hours since 1800-01-01 00:00:0.0"
+      fill_val: -9.96921e+36
+    model:
+      stream: "STS"
+      var: "tasmax"
+      label: "RegCM-r3km"
+      long_name: "Daily Max Temperature"
+      units_in: "K"
+      units_out: "degC"
+      scale: 1.0
+      offset: -273.15
+      has_lev: true
+    visuals:
+      cmap: "RdYlBu_r"
+      cmap_bias: "RdBu_r"
+      vmin: 5
+      vmax: 45
+      bias_vmin: -8
+      bias_vmax: 8
+      color_model: "tab:red"
+      color_obs: "black"
+
+  # MINIMUM TEMPERATURE
+  tasmin:
+    active: true
+    obs:
+      path: "../data/CPC/tmin.2000.nc"
+      var: "tmin"
+      label: "CPC"
+      units_in: "degC"
+      units_out: "degC"
+      lat_name: "lat"
+      lon_name: "lon"
+      time_name: "time"
+      time_units: "hours since 1800-01-01 00:00:0.0"
+      fill_val: -9.96921e+36
+    model:
+      stream: "STS"
+      var: "tasmin"
+      label: "RegCM-r3km"
+      long_name: "Daily Min Temperature"
+      units_in: "K"
+      units_out: "degC"
+      scale: 1.0
+      offset: -273.15
+      has_lev: true
+    visuals:
+      cmap: "RdYlBu_r"
+      cmap_bias: "RdBu_r"
+      vmin: -5
+      vmax: 35
+      bias_vmin: -8
+      bias_vmax: 8
+      color_model: "tab:blue"
+      color_obs: "black"

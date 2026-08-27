@@ -1,0 +1,35 @@
+datasets:
+  model:
+    label: "RegCM-r3km"
+    type: "model"
+  CHIRPS:
+    label: "CHIRPS"
+    type: "obs"
+    path: "../data/CHIRPS/chirps-v2.0.{year}.days_p05.nc"
+    lat_name: "latitude"
+    lon_name: "longitude"
+    time_name: "time"
+    time_units: "days since 1980-01-01"
+    fill_val: -9999.0
+  CPC:
+    label: "CPC"
+    type: "obs"
+    path: "/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/data/CPC/{var}_CPC.nc"
+    lat_name: "lat"
+    lon_name: "lon"
+    time_name: "time"
+    time_units: "hours since 1800-01-01 00:00:0.0"
+    fill_val: -9.96921e+36
+  MSWEP:
+    label: "MSWEP"
+    type: "obs"
+    path: "/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/data/mswep/all_Mor/mswep_1979_2020.nc"
+    var_name: "precipitation"
+    lat_name: "lat"
+    lon_name: "lon"
+    time_name: "time"
+    time_units: "days since 1979-01-01"
+  ABH:
+    label: "ABH Stations"
+    type: "stations"
+    path: "/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/data/Observed_data/ABH_stations_plusziz_and_abhbc1.csv"

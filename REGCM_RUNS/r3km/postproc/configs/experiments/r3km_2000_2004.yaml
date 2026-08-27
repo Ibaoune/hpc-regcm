@@ -1,0 +1,71 @@
+experiment:
+  name: "r3km_2000_2004"
+  sim_root: "../../"
+  sim_name: "T01"
+
+period:
+  spinup:
+    start: "1999-01-01"
+    end: "1999-12-31"
+  evaluation:
+    start: "2000-01-01"
+    end: "auto"
+  completeness:
+    monitoring: "latest_available"
+    annual_statistics: "complete_periods_only"
+    seasonal_statistics: "complete_periods_only"
+    monthly_statistics: "complete_periods_only"
+
+domain:
+  boundary_trim:
+    enabled: true
+    cells: 30
+
+statistics:
+  spatial_weighting: "cell_area" # approximation cos(lat) will be used if cell_area geometry missing
+
+stations:
+  daily_metrics:
+    minimum_valid_fraction: 0.90
+  monthly_aggregation:
+    minimum_valid_fraction_per_month: 0.80
+
+taylor:
+  normalized: true
+  combine_variables: false
+
+modules:
+  do_monitor: true
+  do_preprocess: true
+  do_regrid: true
+  do_climatology_maps: true
+  do_metrics_spatial: true
+  do_metrics_temporal: true
+  do_seasonal_cycle: true
+  do_taylor: true
+  do_station_validation: true
+  do_domain_overview: true
+  do_extremes: false
+  do_precip_distribution: false
+  do_six_hourly_diagnostics: false
+
+imports:
+  - "../datasets.yaml"
+  - "../variables.yaml"
+  - "../regions.yaml"
+  - "../plotting.yaml"
+
+regridding:
+  quantitative_validation:
+    direction: "MODEL_TO_OBS"
+    methods:
+      pr: "bilinear" # For RegCM native grid, conservative fails without valid cell bounds. Wait, user wants config!
+      tasmax: "bilinear"
+      tasmin: "bilinear"
+  visualization_on_model_grid:
+    direction: "OBS_TO_MODEL"
+    methods:
+      pr: "bilinear"
+      tasmax: "bilinear"
+      tasmin: "bilinear"
+  reuse_weights: true

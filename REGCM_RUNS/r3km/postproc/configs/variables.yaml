@@ -1,0 +1,64 @@
+variables:
+  pr:
+    active: true
+    stream: "SRF"
+    long_name: "Daily Precipitation"
+    units_in: "kg m-2 s-1"
+    units_out: "mm"
+    is_rate: true
+    aggregation:
+      six_hourly_to_daily: "sum"
+      daily_to_monthly: "sum"
+      monthly_to_seasonal: "sum"
+      seasonal_to_annual: "sum"
+    valid_min: 0.0
+    valid_max: 0.1
+    action: "warn"
+    action: "warn"
+    relative_bias:
+      enabled: true
+      denominator_mask:
+        diagnostic: "mean_daily_pr"
+        min_reference: 0.1
+        units: "mm/day"
+      report_masked_fraction: true
+    references:
+      primary: "CHIRPS"
+      secondary:
+        - "MSWEP"
+      stations:
+        - "ABH"
+  tasmax:
+    active: true
+    long_name: "Daily Max Temperature"
+    units_in: "K"
+    units_out: "degC"
+    scale: 1.0
+    offset: -273.15
+    is_rate: false
+    aggregation:
+      daily_to_monthly: "mean"
+      monthly_to_seasonal: "mean"
+    valid_min: -50.0
+    valid_max: 60.0
+    action: "warn"
+    action: "warn"
+    references:
+      primary: "CPC"
+  tasmin:
+    active: true
+    long_name: "Daily Min Temperature"
+    units_in: "K"
+    units_out: "degC"
+    scale: 1.0
+    offset: -273.15
+    is_rate: false
+    aggregation:
+      daily_to_monthly: "mean"
+      monthly_to_seasonal: "mean"
+    valid_min: -50.0
+    valid_max: 60.0
+    action: "warn"
+    action: "warn"
+    references:
+      primary: "CPC"
