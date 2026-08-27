@@ -1,0 +1,14 @@
+{
+    "config_hash": "aa4837c2e6877e0070e8e0bf5a30d07d",
+    "variable": "pr",
+    "reference": "MSWEP",
+    "statistic": "partial_mean",
+    "extent": [
+        -21.700000762939453,
+        1.7000091075897217,
+        18.299999237060547,
+        41.70000076293945
+    ],
+    "created_at": "2026-08-14T17:52:36.259919",
+    "figure": "pr_MSWEP_annual_2001.png"
+}
