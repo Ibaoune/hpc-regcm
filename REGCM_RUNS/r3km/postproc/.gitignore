@@ -1,6 +1,8 @@
 # Ignore data and results
 data/
-results/
+results/*
+!results/*/
+!results/**/*.png
 reports/
 *.pid
 __pycache__/
