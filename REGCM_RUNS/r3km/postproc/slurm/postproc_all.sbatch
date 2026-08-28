@@ -34,7 +34,7 @@ python3 src/domain/09_domain_overview.py
 python3 src/maps/03_climatology_maps.py --start-date $START_DATE --end-date $END_DATE --vars pr,tasmax,tasmin --allow-partial-period
 python3 src/pdfs/04_hourly_precip_pdf.py --start-date $START_DATE --end-date $END_DATE
 python3 src/pdfs/08_daily_station_pdf.py --start-date $START_DATE --end-date $END_DATE
-python3 src/commun/11_generate_readmes.py
+
 
 echo "========================================"
 echo "Completed at: $(date)"

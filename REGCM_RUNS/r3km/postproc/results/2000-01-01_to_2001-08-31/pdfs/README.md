@@ -1,5 +1,7 @@
 # Precipitation Intensity Distributions (PDFs)
 
+**Author:** M. El Aabaribaoune (@um6p)
+
 ## Scientific Purpose
 This directory contains normalized Probability Density Functions (PDFs) of precipitation intensity.
 
@@ -19,13 +21,25 @@ RegCM aggregated to ERA5 scale before comparison.
 This is the preferred like-for-like hourly intensity comparison. 
 Files are named `pr_hourly_pdf_common_grid_YYYY.png`.
 
+## Methodology & Data Details
+- **Scripts Used**: 
+  - `src/pdfs/04_hourly_precip_pdf.py` for hourly resolution.
+  - `src/pdfs/08_daily_station_pdf.py` for daily station resolution.
+- **Data Files Used**: 
+  - RegCM Output: `*SHF*.nc` (for hourly) and `*STS*.nc` (for daily accumulations) from `archive_periods`.
+  - Reference Data: ERA5 (~31km) for hourly grids, and In-Situ Stations (ABH configuration) for daily points.
+- **Variables**: `pr` (Precipitation)
+- **Units**: 
+  - Hourly intensity: mm/h (wet-hour threshold $\ge$ 0.1 mm h⁻¹)
+  - Daily intensity: mm/day (wet-day threshold $\ge$ 0.1 mm day⁻¹)
+
 ## Execution Examples (Via SLURM)
 ```bash
 # Submit Hourly PDF post-processing
-sbatch slurm/postproc_hourly_precip.sbatch 2000
+sbatch slurm/postproc_hourly_precip.sbatch 2000-01-01 2001-08-31
 
 # Submit Daily Station PDF post-processing
-sbatch slurm/postproc_daily_station.sbatch 2001
+sbatch slurm/postproc_daily_station.sbatch 2000-01-01 2001-08-31
 ```
 
 ## Current Contents
@@ -34,5 +48,4 @@ sbatch slurm/postproc_daily_station.sbatch 2001
 - `pr_hourly_pdf_native_resolution_20000101_20010831.png`
 - `pr_station_intensity_20000101_20010831.csv`
 
----
-*Note: This README is automatically generated and updated via `src/commun/11_generate_readmes.py`.*
+
