@@ -37,7 +37,7 @@ def cleanup_restarts():
 # ==========================================
 MDATE0 = "1999010100"       # Global start date (and date of the 1st run)
 MDATE_FINAL = "2005010100"  # Run until end of 2004
-PERIOD_LENGTH = "3D"        # "1M" (1 month), "1D" (1 day), "15D" (15 days), etc.
+PERIOD_LENGTH = "10D"        # "1M" (1 month), "1D" (1 day), "15D" (15 days), etc.
 
 TEMPLATE = "templates/test_0010.template.in"
 OUTPUT_IN = "test_0010.in"
@@ -56,12 +56,12 @@ def add_period(dt_str, period):
         else:
             month += 1
         return dt.replace(year=year, month=month).strftime("%Y%m%d%H")
-    elif period == '1D':
-        return (dt + timedelta(days=1)).strftime("%Y%m%d%H")
-    elif period == '3D':
-        return (dt + timedelta(days=3)).strftime("%Y%m%d%H")
-    elif period == '15D':
-        return (dt + timedelta(days=15)).strftime("%Y%m%d%H")
+    elif period.endswith('D'):
+        try:
+            days = int(period[:-1])
+            return (dt + timedelta(days=days)).strftime("%Y%m%d%H")
+        except ValueError:
+            raise ValueError(f"Unsupported period format {period}.")
     else:
         raise ValueError(f"Unsupported period {period}.")
 
