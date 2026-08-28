@@ -23,7 +23,7 @@ plotting:
       enabled: true
       linewidth: 0.7
     borders:
-      enabled: true
+      enabled: false
       linewidth: 0.5
     gridlines:
       enabled: true

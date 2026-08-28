@@ -39,7 +39,7 @@
  ssttyp = 'ERA5',
  dattyp = 'ERA5',
  gdate1 = 1999010100,
- gdate2 = 2010010100,
+ gdate2 = 2005010100,
  calendar = 'gregorian',
  dirglob = '/srv/lustre01/project/climat-um6p-st-iwri-7ksifkvwkuy/users/mohammad.elaabaribao/RegCM/REGCM_RUNS/r3km/T00_IC/input',
  inpglob = '/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/REGCM/data/REGCM_GLOBEDAT',
@@ -47,8 +47,8 @@
  &restartparam
  ifrest  = .true.,   ! If a restart
  mdate0  = 1999010100, ! Global start (is globidate1)
- mdate1  = 2001021300, ! Start date of this run
- mdate2  = 2001022800, ! End date for this run
+ mdate1  = 2001112500, ! Start date of this run
+ mdate2  = 2001121000, ! End date for this run
  /
  &timeparam
  dt     =    30,
@@ -59,9 +59,9 @@
  ifsave  = .true. ,
  savfrq  =    0.,
  ifatm  = .true. ,
- atmfrq  =     6.,
+ atmfrq  =    12.,
  ifrad   = .true. ,
- radfrq  =     6.,
+ radfrq  =    12.,
  ifsts   = .true. ,
  ifshf   = .true. ,
  ifsrf   = .true. ,

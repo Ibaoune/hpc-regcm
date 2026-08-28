@@ -1,3 +1,0 @@
-variable,reference,period,n_valid,MB,MAE,RMSE,r,KGE
-tasmax,CPC,Annual,313,-0.872,1.213,1.444,0.990,0.880
-tasmin,CPC,Annual,313,-1.604,1.618,1.894,0.988,0.874

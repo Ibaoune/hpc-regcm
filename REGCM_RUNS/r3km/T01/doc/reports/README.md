@@ -3,7 +3,7 @@
 **Author**: M. El Aabaribaoune (@um6p)
 
 **Overview**:
-The final destination for all automatically generated technical reports. This includes regular progress summaries (like `report_scenarios.md`) that document what has been simulated, performance bottlenecks, and disk quota consumption.
+This directory is the final destination for all technical reports. There are three types of reports: simulation progress summaries, input data validation reports, and resource usage reports.
 
 **Structure**:
 - **`variables/`**: A subdirectory dedicated to documenting specific model variables.
