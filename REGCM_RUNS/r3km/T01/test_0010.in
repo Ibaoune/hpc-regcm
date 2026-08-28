@@ -48,7 +48,7 @@
  ifrest  = .true.,   ! If a restart
  mdate0  = 1999010100, ! Global start (is globidate1)
  mdate1  = 2001112500, ! Start date of this run
- mdate2  = 2001121000, ! End date for this run
+ mdate2  = 2001112800, ! End date for this run
  /
  &timeparam
  dt     =    30,
