@@ -192,3 +192,33 @@ FIX APPLIED:
 PREVENTION:
   - We must not resubmit jobs immediately when this happens, as it will just burn our core-hour allocations without progressing the simulation.
   - If this becomes a persistent issue, we should consider enabling `do_parallel_netcdf_out = .true.` in test_0010.in to distribute the write-load across nodes (provided the cluster's NetCDF-4 library supports it).
+
+==============================================================================
+INCIDENT #6 — Silent MPI Hang & Corrupted NetCDF on Restart
+==============================================================================
+DATE         : 2026-08-28 to 2026-08-31
+JOB IDs      : 7695717 (HUNG/SILENT FAILURE), 7703468 (FAILED ON RESTART)
+PERIOD       : 2001112500 → 2001121000
+ERROR MESSAGE:
+  Job 7695717 showed no errors but stopped updating log and output files after `2001-11-26 12:00:00 UTC` while remaining "Running" (R) in Slurm for over 22 hours.
+  Upon canceling and restarting (Job 7703468), it immediately crashed with:
+  nc_stream : Cannot create or open file .../test_001_ATM.2001112600.nc: 1
+  Execution terminated because of runtime error
+
+ROOT CAUSE:
+  The first job experienced a silent MPI hang (node deadlock) and stopped writing output, but didn't crash Slurm. It left behind corrupted, half-written NetCDF data files (e.g., *2001112600.nc). When the simulation was restarted from the last valid checkpoint (2001112500), it reached the same date (2001112600) and failed to overwrite the corrupted files, causing an immediate abort.
+
+LAST GOOD STATE:
+  Last valid SAV: test_001_SAV.2001112500.nc
+
+FIX APPLIED:
+  1. Killed the hanging job: scancel 7695717
+  2. Deleted the corrupted files from the output folder: rm T01/output/*2001112600.nc
+  3. Reset the chain state to the last valid restart: echo "2001112500" > chain_state.txt
+  4. Modified run_chain.py to use PERIOD_LENGTH = "10D" instead of "15D" to minimize the time penalty of future hangs.
+  5. Added an automated Python cleanup function (cleanup_restarts()) inside run_chain.py that deletes intermediate restart files but keeps the latest one per month to save disk space.
+  6. Relaunched the chain.
+
+PREVENTION:
+  - Always check file modification dates (stat or ls -l on the output files). If they haven't been touched for hours while the job is "R", the job is hanging.
+  - Before restarting a hung simulation, ALWAYS delete any data output files (ATM, RAD, SRF, etc.) generated *after* the target restart date to prevent "Cannot create or open file" NetCDF clobbering errors.
