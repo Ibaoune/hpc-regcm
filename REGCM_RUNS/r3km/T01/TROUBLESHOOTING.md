@@ -206,7 +206,7 @@ ERROR MESSAGE:
   Execution terminated because of runtime error
 
 ROOT CAUSE:
-  The first job experienced a silent MPI hang (node deadlock) and stopped writing output, but didn't crash Slurm. It left behind corrupted, half-written NetCDF data files (e.g., *2001112600.nc). When the simulation was restarted from the last valid checkpoint (2001112500), it reached the same date (2001112600) and failed to overwrite the corrupted files, causing an immediate abort.
+  The first job experienced a silent MPI hang (node deadlock) and stopped writing output, but didn't crash Slurm. This hang is a direct consequence of the same HPC infrastructure bottlenecks (Lustre filesystem stalls and InfiniBand network drops) detailed in INCIDENT #5. Because the model was stuck waiting for I/O, it left behind corrupted, half-written NetCDF data files (e.g., *2001112600.nc). When the simulation was restarted from the last valid checkpoint (2001112500), it reached the same date (2001112600) and failed to overwrite the corrupted files, causing an immediate abort.
 
 LAST GOOD STATE:
   Last valid SAV: test_001_SAV.2001112500.nc
