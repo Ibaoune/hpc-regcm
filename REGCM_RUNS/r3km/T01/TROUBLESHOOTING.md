@@ -222,3 +222,30 @@ FIX APPLIED:
 PREVENTION:
   - Always check file modification dates (stat or ls -l on the output files). If they haven't been touched for hours while the job is "R", the job is hanging.
   - Before restarting a hung simulation, ALWAYS delete any data output files (ATM, RAD, SRF, etc.) generated *after* the target restart date to prevent "Cannot create or open file" NetCDF clobbering errors.
+
+==============================================================================
+INCIDENT #7 — Slurm Time Limit Exceeded due to Severe I/O Slowdown (Recurrence of #5)
+==============================================================================
+DATE         : 2026-09-02
+JOB ID       : 7718783 (FAILED)
+PERIOD       : 2001121500 → 2001122500 (Simulation dates)
+ERROR MESSAGE:
+  [2026-09-02T06:35:02.155] error: *** JOB 7718783 ON slurm-compute-h22b8-u7-svn4 CANCELLED AT 2026-09-02T06:35:02 DUE TO TIME LIMIT ***
+
+ROOT CAUSE:
+  The simulation encountered the exact same Lustre/InfiniBand infrastructure bottlenecks described in INCIDENT #5. The model's execution slowed down to a crawl (simulating only ~2 days over 36 hours of real time). Because it failed to finish the 10-day block within the 36-hour Slurm wall clock limit, Slurm killed the job ungracefully. Because it was killed mid-write, the NetCDF data files for the current chunk were corrupted.
+
+LAST GOOD STATE:
+  Last valid SAV: test_001_SAV.2001121500.nc (produced by the preceding successful job 7718181).
+
+FIX APPLIED:
+  1. Deleted the corrupted, half-written data files from the output folder (but carefully kept the SAV file!):
+     find T01/output -name "*2001121500.nc" -not -name "*SAV*" -delete
+     find T01/output -name "*2001121600.nc" -delete
+     find T01/output -name "*2001121700.nc" -delete
+  2. Reset the chain state to the last valid restart: echo "2001121500" > T01/chain_state.txt
+  3. Reinitialized and relaunched the chain.
+
+PREVENTION:
+  - When a job is cancelled due to a TIME LIMIT, assume that any data files it was actively writing to are corrupted.
+  - Always clean up these ungracefully closed data files before restarting the simulation to avoid NetCDF clobbering errors.
