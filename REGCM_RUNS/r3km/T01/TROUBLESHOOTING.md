@@ -249,3 +249,28 @@ FIX APPLIED:
 PREVENTION:
   - When a job is cancelled due to a TIME LIMIT, assume that any data files it was actively writing to are corrupted.
   - Always clean up these ungracefully closed data files before restarting the simulation to avoid NetCDF clobbering errors.
+
+==============================================================================
+INCIDENT #8 — Recurrence of Slurm Time Limit Exceeded (I/O Slowdown)
+==============================================================================
+DATE         : 2026-09-05
+JOB ID       : 7732654 (FAILED)
+PERIOD       : 2001122500 → 2002010400 (Simulation dates)
+ERROR MESSAGE:
+  [2026-09-05T07:17:44.188] error: *** JOB 7732654 ON slurm-compute-h21a5-u12-svn3 CANCELLED AT 2026-09-05T07:17:44 DUE TO TIME LIMIT ***
+
+ROOT CAUSE:
+  Continuous severe I/O slowdown on the Lustre/InfiniBand infrastructure. The job only simulated 4 days before hitting the 36-hour wall clock limit, corrupting the actively written files (identical mechanism as Incident #7).
+
+LAST GOOD STATE:
+  Last valid SAV: test_001_SAV.2001122500.nc (produced by the preceding successful job 7730168).
+
+FIX APPLIED:
+  1. Deleted the corrupted, half-written data files from the output folder (safeguarding the SAV and CLM restart files!):
+     find T01/output -name "*2001122*.nc" -not -name "*SAV*" -not -name "*clm*" -delete
+  2. Reset the chain state to the last valid restart: echo "2001122500" > T01/chain_state.txt
+  3. Reinitialized and relaunched the chain (Job 7738481).
+
+PREVENTION:
+  - Confirmed the 10-day block strategy (PERIOD_LENGTH = "10D") is the only viable workaround to avoid catastrophic losses during these chronic HPC infrastructure issues.
+  - When cleaning up, NEVER delete the *clm.regcm* files along with the corrupted NetCDF files, as CLM files are required for restarting the simulation!
