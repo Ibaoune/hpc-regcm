@@ -357,6 +357,14 @@ module mod_heatindex
     b = x2
     fa = (a-ta)/ra(a,ta) + (pc-pa)/(zs(rs)+za) - (tc-a)/rs
     fb = (b-ta)/ra(b,ta) + (pc-pa)/(zs(rs)+za) - (tc-b)/rs
+    if ( abs(fb) <= 1.0e-5_rkx ) then
+      solve1 = b
+      return
+    end if
+    if ( abs(fa) <= 1.0e-5_rkx ) then
+      solve1 = a
+      return
+    end if
     if ( fa*fb > 0.0_rkx ) then
       write(stderr,*) 'solve1 : ta, pa, rs : ', ta, pa, rs
       call fatal(__FILE__,__LINE__,'error interval, solve1')
@@ -388,6 +396,14 @@ module mod_heatindex
     b = x2
     fa = (a-ta)/ra_bar(a,ta) + (pc-pa)/(zs(rs)+za_bar) - (tc-a)/rs
     fb = (b-ta)/ra_bar(b,ta) + (pc-pa)/(zs(rs)+za_bar) - (tc-b)/rs
+    if ( abs(fb) <= 1.0e-5_rkx ) then
+      solve2 = b
+      return
+    end if
+    if ( abs(fa) <= 1.0e-5_rkx ) then
+      solve2 = a
+      return
+    end if
     if ( fa*fb > 0.0_rkx ) then
       write(stderr,*) 'solve2'
       call fatal(__FILE__,__LINE__,'error interval, solve2')
@@ -423,6 +439,14 @@ module mod_heatindex
     fb = (b-ta)/ra_bar(b,ta) + &
       (pc-pa)*(b-ta)/((b-ta)*(zs(rs)+za_bar)+r*ra_bar(b,ta)*(ts_bar-b)) - &
       (tc-ts_bar)/rs
+    if ( abs(fb) <= 1.0e-5_rkx ) then
+      solve3 = b
+      return
+    end if
+    if ( abs(fa) <= 1.0e-5_rkx ) then
+      solve3 = a
+      return
+    end if
     if ( fa*fb > 0.0_rkx ) then
       write(stderr,*) 'solve3 : ta, pa, rs, ts_bar, a, b, fa, fb : ', &
         ta, pa, rs, ts_bar, a, b, fa, fb
@@ -458,6 +482,14 @@ module mod_heatindex
       (pc-pa)/(zs((tc-a)/(q-qv(ta,pa)))+za_un)-(q-qv(ta,pa))
     fb = (b-ta)/ra_un(b,ta) + &
       (pc-pa)/(zs((tc-b)/(q-qv(ta,pa)))+za_un)-(q-qv(ta,pa))
+    if ( abs(fb) <= 1.0e-5_rkx ) then
+      solve4 = b
+      return
+    end if
+    if ( abs(fa) <= 1.0e-5_rkx ) then
+      solve4 = a
+      return
+    end if
     if ( fa*fb > 0.0_rkx ) then
       write(stderr,*) 'solve4'
       call fatal(__FILE__,__LINE__,'error interval, solve4')
@@ -490,6 +522,14 @@ module mod_heatindex
     b = x2
     fa = (a-ta)/ra_un(a,ta) + (phi_salt*pvstar(a)-pa)/za_un -(q-qv(ta,pa))
     fb = (b-ta)/ra_un(b,ta) + (phi_salt*pvstar(b)-pa)/za_un -(q-qv(ta,pa))
+    if ( abs(fb) <= 1.0e-5_rkx ) then
+      solve5 = b
+      return
+    end if
+    if ( abs(fa) <= 1.0e-5_rkx ) then
+      solve5 = a
+      return
+    end if
     if ( fa*fb > 0.0_rkx ) then
       write(stderr,*) 'solve5'
       call fatal(__FILE__,__LINE__,'error interval, solve5')

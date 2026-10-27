@@ -1,6 +1,6 @@
 # TROUBLESHOOTING — RegCM T01 Simulation (3km, Morocco)
 # Author: M. El Aabaribaoune (@um6p)
-# Updated: 2026-08-12
+# Updated: 2026-10-20
 #
 # This file documents every issue that has interrupted the simulation chain,
 # along with the root cause, fix applied, and prevention advice.
@@ -274,3 +274,86 @@ FIX APPLIED:
 PREVENTION:
   - Confirmed the 10-day block strategy (PERIOD_LENGTH = "10D") is the only viable workaround to avoid catastrophic losses during these chronic HPC infrastructure issues.
   - When cleaning up, NEVER delete the *clm.regcm* files along with the corrupted NetCDF files, as CLM files are required for restarting the simulation!
+
+==============================================================================
+INCIDENT #9 — Recurrence of Severe Lustre I/O Stalls on 14 Nodes
+==============================================================================
+DATE         : 2026-10-11
+JOB ID       : 8099570 (CANCELLED / STALLED)
+PERIOD       : 2002041100 → 2002042100 (Simulation dates)
+ERROR MESSAGE / SYMPTOM:
+  Job ran for over 30 hours and 43 minutes in state "R", but only simulated 29 hours of
+  model time (reached 2002-04-12 05:00 UTC). Facing imminent SLURM wall clock kill (36h limit).
+
+ROOT CAUSE:
+  Recurrence of the chronic Toubkal Lustre storage fabric and InfiniBand latency issues
+  over the weekend. Despite reducing the resource footprint to 14 nodes (448 MPI ranks)
+  to ease network congestion, deep storage-target delays caused synchronous NetCDF writes
+  to freeze compute processes in uninterruptible sleep (D state).
+
+LAST GOOD STATE:
+  Last valid SAV: test_001_SAV.2002041100.nc (produced by preceding successful job 8085151).
+  Simulation data valid up to: 2002-04-11 00:00:00 UTC.
+
+FIX APPLIED:
+  1. Manually aborted the stalled job: scancel 8099570
+  2. Deleted partial/corrupted output files written after 2002041100 (safeguarding SAV and CLM files):
+     find output -name "*2002041100.nc" -not -name "*SAV*" -not -name "*clm*" -delete
+     find output -name "*20020412*.nc" -delete
+  3. Reset chain state: echo "2002041100" > chain_state.txt
+  4. Reinitialized and relaunched chain (./run_chain.py --init && sbatch job.sh).
+
+PREVENTION:
+  - Continue reporting recurrence to HPC support team with exact node and job telemetry.
+  - Maintain the 10-day chunking strategy to protect completed simulation blocks.
+
+==============================================================================
+INCIDENT #10 — Numerical Root-Finding Crash in Heat Index Diagnostic (mod_heatindex.F90 / solve3)
+==============================================================================
+DATE         : 2026-10-15
+JOB IDs      : 8132706 (FAILED, 2026-10-15), 8139794 (FAILED, 2026-10-17)
+PERIOD       : 2002073000 → 2002080900 (Crashed at 2002-08-07 05:00 UTC; 100% deterministic reproducibility)
+ERROR MESSAGE:
+  solve3 : ta, pa, rs, ts_bar, a, b, fa, fb :    299.35935456263172        924.85117949122650        3.8699999999999998E-002   303.93598717949317        299.35935456263172        303.93598717949317       -156.69283773919463       -4.4369727447701734E-008
+  -------------- FATAL CALLED ---------------
+   Fatal in file: mod_heatindex.F90 at line:      429
+  error interval, solve3
+  -------------------------------------------
+  Abort called by computing node          342 at 2026-10-15 11:35:04.139 +0100
+
+ROOT CAUSE:
+  A floating-point root-finding failure in the surface diagnostic calculation of the
+  Steadman Heat Index (srf_htindx_out, called from mod_lm_interface.F90 for the SRF stream).
+  The subroutine solve3 in Share/mod_heatindex.F90 uses a bisection solver on
+  interval [a, b] = [ta, ts_bar] and requires opposite signs at interval boundaries (fa * fb <= 0).
+  Due to floating-point rounding when the root lies virtually on the boundary b, fb evaluated
+  to -4.43697e-8 (nearly zero, but slightly negative). Because both fa and fb were negative
+  (fa * fb > 0), the solver triggered an unforgiving 'call fatal' that aborted all MPI ranks.
+  This was NOT a physical/meteorological instability (surface pressure and dynamics were stable:
+  ps min/max = 693.46 / 1033.28 mb; no CFL violations).
+
+LAST GOOD STATE:
+  - Restart files produced during this run: test_001_SAV.2002080100.nc and
+    test_001.clm.regcm.r.2002080100.nc (at the monthly boundary 2002-08-01 00:00 UTC).
+  - Preceding start restart: test_001_SAV.2002073000.nc.
+  - Simulation output valid up to: 2002-08-07 04:00:00 UTC.
+
+FIX APPLIED:
+  1. Patched Share/mod_heatindex.F90 (2026-10-20):
+     Added boundary tolerance guards in root solvers solve1 through solve5:
+       if ( abs(fb) <= 1.0e-5_rkx ) then ; solveN = b ; return ; end if
+       if ( abs(fa) <= 1.0e-5_rkx ) then ; solveN = a ; return ; end if
+     This ensures that if a boundary value fb is numerically zero within floating-point
+     precision (e.g. -4.4e-8), the solver accepts the boundary as the solution without
+     triggering an abort on fa*fb > 0.
+  2. Recompiled RegCM with CLM45 enabled and updated binary:
+     make regcm && cp Main/regcm SRC_REGCM/bin/regcmMPICLM45
+  3. Deleted partial 20020807 output files:
+     rm output/*20020807*.nc
+  4. Configured test_0010.in to restart from 2002080100 (test_001_SAV.2002080100.nc)
+     targeting 2002080900.
+
+PREVENTION:
+  - Numerical root solvers in diagnostic routines should include a small tolerance (epsilon)
+    before aborting, to ensure minor floating-point boundary imprecisions do not abort
+    multi-week climate simulations.
