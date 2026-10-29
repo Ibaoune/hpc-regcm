@@ -43,6 +43,9 @@ def load_period_data(path_template_dir, var, years, start_date, end_date):
         
     ds = xr.open_mfdataset(valid_paths, combine='by_coords')
     
+    # Normalize time coordinate so daily datasets match regardless of timestamp hour (00:00 vs 12:00)
+    ds['time'] = pd.to_datetime(ds['time'].values).normalize()
+    
     # Subset time
     ds = ds.sel(time=slice(start_date, end_date))
     
@@ -94,19 +97,29 @@ def get_complete_seasons(time_vals, start_date, end_date):
     start_year = start_dt.year
     end_year = end_dt.year
     
-    # DJF: Dec Y, Jan Y+1, Feb Y+1
-    for y in range(start_year - 1, end_year + 1):
-        # DJF
-        s_dt = pd.to_datetime(f"{y}-12-01")
-        e_dt = pd.to_datetime(f"{y+1}-02-28") + pd.offsets.MonthEnd(0) # End of Feb
-        if s_dt >= start_dt and e_dt <= end_dt:
-            m1 = time_series.dt.month.isin([12]) & (time_series.dt.year == y)
-            m2 = time_series.dt.month.isin([1, 2]) & (time_series.dt.year == y + 1)
-            mask = (m1 | m2).values
-            if mask.sum() > 0:
-                season_masks["DJF"].append(mask)
-                season_desc["DJF"].append(f"{y}-12-01 → {e_dt.strftime('%Y-%m-%d')}")
+    # DJF
+    if start_year == end_year:
+        # Règle pour une seule année : DJF regroupe Janvier, Février et Décembre de la même année
+        y = start_year
+        mask = (time_series.dt.month.isin([1, 2, 12]) & (time_series.dt.year == y)).values
+        if mask.sum() > 0:
+            season_masks["DJF"].append(mask)
+            season_desc["DJF"].append(f"Jan, Feb, Dec {y} (Same-year DJF)")
+    else:
+        # Règle multi-années : D(Year-1), J(Year), F(Year)
+        for y in range(start_year, end_year + 1):
+            s_dt = pd.to_datetime(f"{y-1}-12-01")
+            e_dt = pd.to_datetime(f"{y}-02-28") + pd.offsets.MonthEnd(0)
+            if s_dt >= start_dt and e_dt <= end_dt:
+                m1 = time_series.dt.month.isin([12]) & (time_series.dt.year == y - 1)
+                m2 = time_series.dt.month.isin([1, 2]) & (time_series.dt.year == y)
+                mask = (m1 | m2).values
+                if mask.sum() > 0:
+                    season_masks["DJF"].append(mask)
+                    season_desc["DJF"].append(f"{y-1}-12-01 → {e_dt.strftime('%Y-%m-%d')}")
                 
+    # MAM, JJA, SON for each year
+    for y in range(start_year, end_year + 1):
         # MAM
         s_dt = pd.to_datetime(f"{y}-03-01")
         e_dt = pd.to_datetime(f"{y}-05-31")
@@ -244,9 +257,12 @@ def process_evaluation(var, start_date, end_date, metrics_writer, allow_partial)
             
         if o_nat_lon.ndim == 1:
             o_lon_m, o_lat_m = np.meshgrid(o_nat_lon, o_nat_lat)
-            rg_lon_m, rg_lat_m = np.meshgrid(o_rg_lon, o_rg_lat)
         else:
             o_lon_m, o_lat_m = o_nat_lon, o_nat_lat
+            
+        if o_rg_lon.ndim == 1:
+            rg_lon_m, rg_lat_m = np.meshgrid(o_rg_lon, o_rg_lat)
+        else:
             rg_lon_m, rg_lat_m = o_rg_lon, o_rg_lat
             
         pc1 = axes[0].pcolormesh(o_lon_m, o_lat_m, o_ann, cmap=cmap_val, norm=norm_val, shading="auto", transform=ccrs.PlateCarree() if HAS_CARTOPY else None)
