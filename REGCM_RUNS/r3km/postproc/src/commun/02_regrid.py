@@ -54,15 +54,20 @@ def check_cache(meta_path, current_hash, force_overwrite):
 def load_data(path, var, is_model=False):
     with nc.Dataset(path) as ds:
         if is_model:
-            lat = ds.variables["xlat"][:]
-            lon = ds.variables["xlon"][:]
+            lat = np.asarray(ds.variables["xlat"][:], dtype=np.float32)
+            lon = np.asarray(ds.variables["xlon"][:], dtype=np.float32)
             mask = ds.variables.get("mask", None)
-            if mask is not None: mask = mask[:]
+            if mask is not None: mask = np.asarray(mask[:], dtype=np.float32)
         else:
-            lat = ds.variables["lat"][:]
-            lon = ds.variables["lon"][:]
+            lat = np.asarray(ds.variables["lat"][:], dtype=np.float32)
+            lon = np.asarray(ds.variables["lon"][:], dtype=np.float32)
             mask = None
-        data = ds.variables[var][:]
+        raw_data = ds.variables[var][:]
+        if isinstance(raw_data, np.ma.MaskedArray):
+            data = np.where(raw_data.mask, np.nan, raw_data.data)
+        else:
+            data = raw_data
+        data = np.asarray(data, dtype=np.float32)
         t = ds.variables["time"][:]
         t_units = ds.variables["time"].units
         
@@ -109,13 +114,23 @@ def do_regrid(src_lat, src_lon, src_data, dst_lat, dst_lon, method, src_curvilin
         
     ds_dst = xr.Dataset({"lat": (["y","x"], dst_lat2d), "lon": (["y","x"], dst_lon2d)})
     
-    regridder = xe.Regridder(ds_src, ds_dst, method, periodic=False, reuse_weights=reuse_weights)
+    weights_dir = cp.DATA_DIR / "weights"
+    weights_dir.mkdir(parents=True, exist_ok=True)
+    src_tag = f"{ds_src['lat'].shape[0]}x{ds_src['lat'].shape[1]}"
+    dst_tag = f"{ds_dst['lat'].shape[0]}x{ds_dst['lat'].shape[1]}"
+    weights_file = str(weights_dir / f"regrid_{method}_{src_tag}_to_{dst_tag}.nc")
+    reuse = reuse_weights and os.path.exists(weights_file)
+    regridder = xe.Regridder(ds_src, ds_dst, method, periodic=False, filename=weights_file, reuse_weights=reuse)
     
     ntime = src_data.shape[0]
     ny_dst, nx_dst = dst_lat2d.shape
     out = np.full((ntime, ny_dst, nx_dst), np.nan, dtype=np.float32)
     for i in range(ntime):
-        out[i] = regridder(src_data[i]).values
+        sl = src_data[i]
+        if isinstance(sl, np.ma.MaskedArray):
+            sl = np.where(sl.mask, np.nan, sl.data)
+        res = regridder(np.asarray(sl, dtype=np.float32))
+        out[i] = res.values if hasattr(res, 'values') else res
     return out
 
 def save_regridded(out_path, var, data, t_arr, t_units, lat, lon, curvilinear=False, extra_meta=""):
@@ -186,6 +201,8 @@ for var in varlist:
                 
             cfg_hash = get_config_hash({"direction": direction, "method": method, "var": var, "obs": obs_ds_name})
             
+            is_obs_curv = (obs_lat.ndim == 2)
+            
             if direction == "MODEL_TO_OBS":
                 out_dir = REGRIDDED_DIR / obs_ds_name / "model" / var
                 out_dir.mkdir(parents=True, exist_ok=True)
@@ -200,11 +217,14 @@ for var in varlist:
                 if method == "conservative" and (not mod_bounds or not obs_bounds):
                     raise ValueError(f"Cell bounds missing for conservative on RegCM. Action=fail. Update YAML to bilinear for {var}.")
                     
-                obs_lat2d, obs_lon2d = np.meshgrid(obs_lon, obs_lat)
-                obs_lon2d_c, obs_lat2d_c = np.meshgrid(obs_lon, obs_lat)
+                if is_obs_curv:
+                    obs_lat2d_c = obs_lat
+                    obs_lon2d_c = obs_lon
+                else:
+                    obs_lon2d_c, obs_lat2d_c = np.meshgrid(obs_lon, obs_lat)
                 
                 rg_data = do_regrid(xlat, xlon, mod_data, obs_lat2d_c, obs_lon2d_c, method, True, reuse)
-                save_regridded(out_path, var, rg_data, mod_t, mod_tunits, obs_lat, obs_lon, False, f"RegCM {var} on {obs_ds_name} grid")
+                save_regridded(out_path, var, rg_data, mod_t, mod_tunits, obs_lat, obs_lon, is_obs_curv, f"RegCM {var} on {obs_ds_name} grid")
                 
                 with open(meta_path, "w") as f:
                     json.dump({"config_hash": cfg_hash, "method": method, "regrid_direction": "MODEL_TO_OBS", "weights_used": reuse}, f)
@@ -223,7 +243,7 @@ for var in varlist:
                 if method == "conservative" and (not obs_bounds or not mod_bounds):
                     raise ValueError(f"Cell bounds missing for conservative on RegCM. Action=fail. Update YAML to bilinear for {var}.")
                     
-                rg_data = do_regrid(obs_lat, obs_lon, obs_data, xlat, xlon, method, False, reuse)
+                rg_data = do_regrid(obs_lat, obs_lon, obs_data, xlat, xlon, method, is_obs_curv, reuse)
                 
                 # Apply mask to target
                 for i in range(rg_data.shape[0]):
