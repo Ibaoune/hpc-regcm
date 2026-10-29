@@ -230,9 +230,38 @@ def process_obs(var: str, year: int, force: bool):
         path_template = obs_cfg["path_template"]
         fpath_str = path_template.format(year=year, var=obs_cfg["var"])
         
-        if not os.path.exists(fpath_str):
+        actual_fpath = None
+        if os.path.exists(fpath_str):
+            actual_fpath = fpath_str
+        elif "*" in fpath_str:
+            import glob, re
+            cands = sorted(glob.glob(fpath_str))
+            for c in cands:
+                m = re.search(r"_(\d{4})\d{4}-(\d{4})\d{4}\.nc", c)
+                if m:
+                    sy, ey = int(m.group(1)), int(m.group(2))
+                    if sy <= year <= ey:
+                        actual_fpath = c
+                        break
+            if actual_fpath is None and len(cands) > 0:
+                import cftime
+                for c in cands:
+                    try:
+                        with nc.Dataset(c) as dsc:
+                            tv = dsc.variables.get(cp.cfg.get("datasets", {}).get(dataset_name, {}).get("time_name", "time"))
+                            if tv is not None:
+                                dts_c = cftime.num2date(tv[:], tv.units, calendar=getattr(tv, "calendar", "standard"))
+                                if any(d.year == year for d in dts_c):
+                                    actual_fpath = c
+                                    break
+                    except:
+                        pass
+                        
+        if actual_fpath is None:
             print(f"       ⚠ {dataset_name} file not found: {fpath_str}")
             continue
+            
+        fpath_str = actual_fpath
             
         out_dir = PROCESSED_DIR / "obs" / dataset_name / var
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -246,31 +275,10 @@ def process_obs(var: str, year: int, force: bool):
         print(f"       → Processing {dataset_name} from {os.path.basename(fpath_str)}")
         try:
             with nc.Dataset(fpath_str) as ds:
-                raw_var = ds.variables[obs_cfg["var"]]
-                data = raw_var[:]
-                
-                # Squeeze extraneous dims if necessary (e.g. depth=1)
-                if data.ndim == 4 and data.shape[1] == 1:
-                    data = data.squeeze(axis=1)
-                
-                if np.ma.is_masked(data):
-                    data = np.where(data.mask, np.nan, data.data)
-                
-                # Check for extreme fill values
-                fill_val = float(cp.cfg.get("datasets", {}).get(dataset_name, {}).get("fill_val", -9999.0))
-                data = np.where(data <= fill_val, np.nan, data)
-                
-                lat_var = ds.variables.get(cp.cfg.get("datasets", {}).get(dataset_name, {}).get("lat_name", "lat"))
-                lon_var = ds.variables.get(cp.cfg.get("datasets", {}).get(dataset_name, {}).get("lon_name", "lon"))
-                
-                if lat_var is None or lon_var is None:
-                    print(f"       ⚠ Cannot find lat/lon for {dataset_name}")
-                    continue
-                    
-                lat = lat_var[:]
-                lon = lon_var[:]
-                
                 time_var = ds.variables.get(cp.cfg.get("datasets", {}).get(dataset_name, {}).get("time_name", "time"))
+                if time_var is None:
+                    print(f"       ⚠ Cannot find time variable for {dataset_name}")
+                    continue
                 t_data_full = time_var[:]
                 t_units = time_var.units
                 
@@ -283,8 +291,44 @@ def process_obs(var: str, year: int, force: bool):
                     print(f"       ⚠ No data found for year {year} in {dataset_name}")
                     continue
                     
-                data = data[mask]
+                time_idx = np.where(mask)[0]
+                raw_var = ds.variables[obs_cfg["var"]]
+                data = raw_var[time_idx]
                 t_data = t_data_full[mask]
+                
+                # Squeeze extraneous dims if necessary (e.g. depth=1)
+                if data.ndim == 4 and data.shape[1] == 1:
+                    data = data.squeeze(axis=1)
+                
+                if np.ma.is_masked(data):
+                    data = np.where(data.mask, np.nan, data.data)
+                
+                # Check for extreme fill values
+                fill_val = float(cp.cfg.get("datasets", {}).get(dataset_name, {}).get("fill_val", -9999.0))
+                if fill_val < 0:
+                    data = np.where(data <= fill_val, np.nan, data)
+                else:
+                    data = np.where(data >= fill_val * 0.999, np.nan, data)
+                data = np.where(data >= 1.0e15, np.nan, data)
+                
+                lat_var = ds.variables.get(cp.cfg.get("datasets", {}).get(dataset_name, {}).get("lat_name", "lat"))
+                lon_var = ds.variables.get(cp.cfg.get("datasets", {}).get(dataset_name, {}).get("lon_name", "lon"))
+                
+                if lat_var is None or lon_var is None:
+                    print(f"       ⚠ Cannot find lat/lon for {dataset_name}")
+                    continue
+                    
+                lat = lat_var[:]
+                lon = lon_var[:]
+                
+                # Automatic unit conversion:
+                raw_units = getattr(raw_var, "units", "")
+                if (var == "pr" and raw_units == "kg m-2 s-1") or obs_cfg.get("is_rate", False):
+                    data = data * 86400.0
+                    print(f"       [CONVERT] {var} multiplied by 86400 (kg m-2 s-1 → mm/day)")
+                elif var in ["tasmax", "tasmin", "tas"] and (raw_units == "K" or np.nanmean(data) > 150.0):
+                    data = data - 273.15
+                    print(f"       [CONVERT] {var} converted from Kelvin to degC (- 273.15)")
                 
             # Apply valid min/max logic from YAML (ONLY WARN/FAIL, NEVER CLIP)
             data = data.astype(np.float32)
