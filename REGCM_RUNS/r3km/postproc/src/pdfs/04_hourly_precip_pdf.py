@@ -191,6 +191,10 @@ def process_pdfs(start_date, end_date, region, threshold=0.1):
         archive_dir = cp.POSTPROC_ROOT.parent / cp.SIM_NAME / "archive_periods" / f"{y}_all"
         logger.info(f"Looking for RegCM files in: {archive_dir}")
         regcm_files = sorted(glob.glob(str(archive_dir / f"test_001_SHF.{y}*.nc")))
+        if not regcm_files:
+            output_dir = cp.POSTPROC_ROOT.parent / cp.SIM_NAME / "output"
+            logger.info(f"Fallback looking for RegCM files in: {output_dir}")
+            regcm_files = sorted(glob.glob(str(output_dir / f"test_001_SHF.{y}*.nc")))
         logger.info(f"Found {len(regcm_files)} RegCM files matching test_001_SHF.{y}*.nc")
         if not regcm_files:
             continue

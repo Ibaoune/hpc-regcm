@@ -64,7 +64,11 @@ def main():
     regcm_files = []
     for y in years:
         glob_str = str(cp.POSTPROC_ROOT.parent / "T01" / "archive_periods" / f"{y}_all" / f"*_SHF.{y}*.nc")
-        regcm_files.extend(sorted(glob.glob(glob_str)))
+        found = sorted(glob.glob(glob_str))
+        if not found:
+            glob_str_out = str(cp.POSTPROC_ROOT.parent / "T01" / "output" / f"*_SHF.{y}*.nc")
+            found = sorted(glob.glob(glob_str_out))
+        regcm_files.extend(found)
         
     if not regcm_files:
         raise ValueError(f"No RegCM files found for period {period_str}")
