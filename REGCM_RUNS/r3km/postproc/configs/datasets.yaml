@@ -29,7 +29,22 @@ datasets:
     lon_name: "lon"
     time_name: "time"
     time_units: "days since 1979-01-01"
+  EUR-12:
+    label: "RegCM-EUR12"
+    type: "obs"
+    path: "/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/data/EUR-12/ICTP/EC-Earth3-Veg/historical/r1i1p1f1/RegCM5-0/v1-r1/day/{var}/v20250415/{var}_EUR-12_EC-Earth3-Veg_historical_r1i1p1f1_ICTP_RegCM5-0_v1-r1_day_*.nc"
+    lat_name: "lat"
+    lon_name: "lon"
+    time_name: "time"
+    fill_val: 1.0e+20
   ABH:
     label: "ABH Stations"
     type: "stations"
     path: "/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/data/Observed_data/ABH_stations_plusziz_and_abhbc1.csv"
+  ERA5_hourly:
+    label: "ERA5"
+    type: "obs"
+    path: "/home/mohammad.elaabaribao/lustre/climat-um6p-st-iwri-7ksifkvwkuy/shared/TEAM/data/ERA5/from_khadija/hourly/era5_{year}.nc"
+    time_name: "time"
+    lat_name: "latitude"
+    lon_name: "longitude"

@@ -1,6 +1,6 @@
 experiment:
   name: "r3km_2000_2004"
-  sim_root: "../../"
+  sim_root: "../"
   sim_name: "T01"
 
 period:
@@ -48,6 +48,7 @@ modules:
   do_extremes: false
   do_precip_distribution: false
   do_six_hourly_diagnostics: false
+  do_diurnal_cycle: true
 
 imports:
   - "../datasets.yaml"

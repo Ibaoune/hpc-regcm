@@ -14,7 +14,6 @@ variables:
     valid_min: 0.0
     valid_max: 0.1
     action: "warn"
-    action: "warn"
     relative_bias:
       enabled: true
       denominator_mask:
@@ -26,6 +25,9 @@ variables:
       primary: "CHIRPS"
       secondary:
         - "MSWEP"
+        - "EUR-12"
+      subdaily:
+        - "ERA5_hourly"
       stations:
         - "ABH"
   tasmax:
@@ -42,9 +44,10 @@ variables:
     valid_min: -50.0
     valid_max: 60.0
     action: "warn"
-    action: "warn"
     references:
       primary: "CPC"
+      secondary:
+        - "EUR-12"
   tasmin:
     active: true
     long_name: "Daily Min Temperature"
@@ -59,6 +62,25 @@ variables:
     valid_min: -50.0
     valid_max: 60.0
     action: "warn"
-    action: "warn"
     references:
       primary: "CPC"
+      secondary:
+        - "EUR-12"
+  tas:
+    active: true
+    stream: "SRF"
+    long_name: "Near-Surface Air Temperature"
+    units_in: "K"
+    units_out: "degC"
+    scale: 1.0
+    offset: -273.15
+    is_rate: false
+    aggregation:
+      daily_to_monthly: "mean"
+      monthly_to_seasonal: "mean"
+    valid_min: -50.0
+    valid_max: 60.0
+    action: "warn"
+    references:
+      subdaily:
+        - "ERA5_hourly"
