@@ -9,3 +9,7 @@ reports/
 *.pid
 __pycache__/
 *.pyc
+
+# Backups and ESMF runtime logs
+*.bak
+*.ESMF_LogFile
