@@ -37,7 +37,7 @@ def cleanup_restarts():
 # ==========================================
 MDATE0 = "1999010100"       # Global start date (and date of the 1st run)
 MDATE_FINAL = "2005010100"  # Run until end of 2004
-PERIOD_LENGTH = "10D"        # "1M" (1 month), "1D" (1 day), "15D" (15 days), etc.
+PERIOD_LENGTH = "10D"        # 10-day chunks for stability
 
 TEMPLATE = "templates/test_0010.template.in"
 OUTPUT_IN = "test_0010.in"

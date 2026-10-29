@@ -8,17 +8,17 @@
 ######################
 ## TOUBKAL    UM6P ##
 ######################
-#SBATCH --job-name=RegCM_Mor_28nds        # Job Name
-#SBATCH --output=RegCM_Mor_28nds_%j.log    # standard output
-#SBATCH --error=RegCM_Mor_28nds_%j.log    # error output
-#SBATCH --nodes=28
+#SBATCH --job-name=RegCM_Mor_14nds        # Job Name
+#SBATCH --output=RegCM_Mor_14nds_%j.log    # standard output
+#SBATCH --error=RegCM_Mor_14nds_%j.log    # error output
+#SBATCH --nodes=14
 #SBATCH --ntasks-per-node=32               # Tasks per node
 #SBATCH --time=36:00:00             # Wall clock limit (minutes)
 #SBATCH --account=CLIMAT-UM6P-ST-IWRI-7KSIFKVWKUY-DEFAULT-CPU
 # Display executed commands
 set -x
 
-OUT_FILE="RegCM_Mor_28nds_${SLURM_JOB_ID}.log"
+OUT_FILE="RegCM_Mor_14nds_${SLURM_JOB_ID}.log"
 
 # Load necessary modules
 module purge
@@ -44,15 +44,15 @@ export UCX_RC_TIMEOUT=20
 
 # Execute the MPI program and log the time
 {
-    time mpirun -n 896 ./bin/regcmMPICLM45 test_0010.in
+    time mpirun -n 448 ./bin/regcmMPICLM45 test_0010.in
 } >> $OUT_FILE 2>&1  # Append both stdout and stderr to OUT_FILE
 
 # Check if the run was successful
 if [ $? -eq 0 ]; then
     echo "Run finished successfully. Launching the next step..." >> $OUT_FILE
-    mv $OUT_FILE logs/RegCM_Mor_28nds_${SLURM_JOB_ID}_SUCCESS.log
-    ./run_chain.py >> logs/RegCM_Mor_28nds_${SLURM_JOB_ID}_SUCCESS.log 2>&1
+    mv $OUT_FILE logs/RegCM_Mor_14nds_${SLURM_JOB_ID}_SUCCESS.log
+    ./run_chain.py >> logs/RegCM_Mor_14nds_${SLURM_JOB_ID}_SUCCESS.log 2>&1
 else
     echo "Error during the run. Chaining is stopped." >> $OUT_FILE
-    mv $OUT_FILE logs/RegCM_Mor_28nds_${SLURM_JOB_ID}_FAILED.log
+    mv $OUT_FILE logs/RegCM_Mor_14nds_${SLURM_JOB_ID}_FAILED.log
 fi
