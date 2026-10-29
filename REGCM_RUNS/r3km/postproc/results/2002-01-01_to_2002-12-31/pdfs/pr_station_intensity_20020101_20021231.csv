@@ -1,0 +1,3 @@
+dataset,n_samples,mean_wet_intensity,p95,p99,maximum
+In-situ,67456,8.81,32.50,58.69,244.60
+RegCM_3km,67456,3.14,14.59,35.86,107.34
