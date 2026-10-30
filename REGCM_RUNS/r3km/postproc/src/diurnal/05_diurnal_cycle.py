@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # ==============================================================================
 # Script Name: 05_diurnal_cycle.py
-# Description: Diurnal Cycle Comparison (RegCM vs ERA5 Subdaily)
+# Description: Diurnal Cycle Comparison (RegCM vs ERA5 Subdaily) for 2m Temperature
 # Author: M. El Aabaribaoune (@um6p)
 # ==============================================================================
 """
 05_diurnal_cycle.py
 ===================
-Computes and visualizes the diurnal cycle of precipitation and 2m temperature:
+Computes and visualizes the diurnal cycle of 2m temperature (tas):
 1. Hourly mean diurnal curves (00h to 23h UTC) for Morocco across seasons:
    - Annual, DJF, MAM, JJA, SON
    - Peak hour timing, nadir hour timing, diurnal amplitude
@@ -165,7 +165,7 @@ def get_counts_dict():
 
 def process_regcm(var_name, regcm_files, regcm_crop_info, start_date, end_date):
     """
-    Extracts hourly diurnal curves and 2D diurnal cycles from RegCM files.
+    Extracts hourly diurnal curves and 2D diurnal cycles from RegCM SRF files (tas in degC).
     """
     iy_min, iy_max, jx_min, jx_max, xlat_crop, xlon_crop, mask_crop = regcm_crop_info
     ny_c, nx_c = xlat_crop.shape
@@ -178,30 +178,20 @@ def process_regcm(var_name, regcm_files, regcm_crop_info, start_date, end_date):
 
     logger.info(f"Processing RegCM {var_name} across {len(regcm_files)} daily files...")
 
-    # Determine scaling / offset
-    # pr in SHF is kg m-2 s-1 -> multiply by 3600.0 for mm/h
-    # tas in SRF is K -> subtract 273.15 for degC
-    is_pr = (var_name == "pr")
-
     start_dt = pd.to_datetime(start_date)
     end_dt = pd.to_datetime(end_date)
-    is_single_year = (start_dt.year == end_dt.year)
 
     for fpath in tqdm(regcm_files, desc=f"RegCM {var_name}"):
         with nc.Dataset(fpath) as ds:
             t_var = ds.variables['time']
             times = nc.num2date(t_var[:], t_var.units, calendar=getattr(t_var, 'calendar', 'standard'))
 
-            if is_pr:
-                # Shape (24, 917, 1081)
-                vals = ds.variables['pr'][:, iy_min:iy_max, jx_min:jx_max] * 3600.0
+            # Shape (24, 1, 917, 1081) or (24, 917, 1081)
+            raw_tas = ds.variables['tas']
+            if raw_tas.ndim == 4:
+                vals = raw_tas[:, 0, iy_min:iy_max, jx_min:jx_max] - 273.15
             else:
-                # Shape (24, 1, 917, 1081) or (24, 917, 1081)
-                raw_tas = ds.variables['tas']
-                if raw_tas.ndim == 4:
-                    vals = raw_tas[:, 0, iy_min:iy_max, jx_min:jx_max] - 273.15
-                else:
-                    vals = raw_tas[:, iy_min:iy_max, jx_min:jx_max] - 273.15
+                vals = raw_tas[:, iy_min:iy_max, jx_min:jx_max] - 273.15
 
         nt = len(times)
         for t_idx in range(nt):
@@ -247,7 +237,7 @@ def process_regcm(var_name, regcm_files, regcm_crop_info, start_date, end_date):
 
 def process_era5(var_name, era5_files, era5_crop_info, start_date, end_date):
     """
-    Extracts hourly diurnal curves and 2D diurnal cycles from ERA5 hourly file(s).
+    Extracts hourly diurnal curves and 2D diurnal cycles from ERA5 hourly file(s) (t2m in degC).
     """
     ilat_min, ilat_max, ilon_min, ilon_max, elat_crop, elon_crop, mask_crop = era5_crop_info
     ny_e, nx_e = elat_crop.shape[0], elon_crop.shape[0]
@@ -261,21 +251,17 @@ def process_era5(var_name, era5_files, era5_crop_info, start_date, end_date):
     if isinstance(era5_files, (str, Path)):
         era5_files = [era5_files]
 
-    era5_var = "tp" if var_name == "pr" else "t2m"
     start_dt = pd.to_datetime(start_date)
     end_dt = pd.to_datetime(end_date)
 
     for era5_file in era5_files:
-        logger.info(f"Processing ERA5 {era5_var} from {Path(era5_file).name}...")
+        logger.info(f"Processing ERA5 t2m from {Path(era5_file).name}...")
         with nc.Dataset(era5_file) as ds:
             t_var = ds.variables['time']
             times = nc.num2date(t_var[:], t_var.units, calendar=getattr(t_var, 'calendar', 'standard'))
 
             logger.info("Reading cropped ERA5 block from disk...")
-            if var_name == "pr":
-                vals = ds.variables['tp'][:, ilat_min:ilat_max, ilon_min:ilon_max] * 1000.0 # m to mm/h
-            else:
-                vals = ds.variables['t2m'][:, ilat_min:ilat_max, ilon_min:ilon_max] - 273.15 # K to degC
+            vals = ds.variables['t2m'][:, ilat_min:ilat_max, ilon_min:ilon_max] - 273.15 # K to degC
 
         nt = len(times)
         logger.info(f"Accumulating ERA5 hourly slices (N={nt})...")
@@ -369,8 +355,8 @@ def plot_diurnal_curves(var_name, regcm_curves, era5_curves, metrics_list, out_p
     Renders 5-panel publication-grade diurnal cycle curve figures.
     """
     fig, axes = plt.subplots(1, 5, figsize=(20, 4.5), sharey=True)
-    unit_str = "mm/h" if var_name == "pr" else "°C"
-    var_label = "Precipitation" if var_name == "pr" else "2m Temperature"
+    unit_str = "°C"
+    var_label = "2m Temperature"
 
     hours = np.arange(24)
 
@@ -421,8 +407,8 @@ def plot_spatial_maps(var_name, regcm_grid_rg, era5_grid, elon, elat, era5_mask,
     2. Diurnal Amplitude (ERA5, RegCM, Bias)
     """
     extent = [-18.0, 0.0, 20.0, 36.5]
-    unit_str = "mm/h" if var_name == "pr" else "°C"
-    var_label = "Precipitation" if var_name == "pr" else "2m Temperature"
+    unit_str = "°C"
+    var_label = "2m Temperature"
 
     elon2d, elat2d = np.meshgrid(elon, elat)
 
@@ -487,15 +473,15 @@ def plot_spatial_maps(var_name, regcm_grid_rg, era5_grid, elon, elat, era5_mask,
             ax.set_facecolor(get_nan_color())
 
         vmax_amp = float(np.nanpercentile(ec_amp, 98)) if np.sum(np.isfinite(ec_amp)) > 0 else 5.0
-        vmax_amp = max(vmax_amp, 1.0 if var_name == "pr" else 10.0)
+        vmax_amp = max(vmax_amp, 10.0)
 
-        cmap_amp = plt.get_cmap("YlGnBu" if var_name == "pr" else "OrRd")
+        cmap_amp = plt.get_cmap("OrRd")
         norm_amp = mcolors.Normalize(vmin=0, vmax=vmax_amp)
 
         max_bias = float(np.nanpercentile(np.abs(bias_amp), 98)) if np.sum(np.isfinite(bias_amp)) > 0 else 2.0
-        max_bias = max(max_bias, 0.5 if var_name == "pr" else 3.0)
+        max_bias = max(max_bias, 3.0)
 
-        cmap_bias = plt.get_cmap("BrBG" if var_name == "pr" else "RdBu_r")
+        cmap_bias = plt.get_cmap("RdBu_r")
         norm_bias = mcolors.Normalize(vmin=-max_bias, vmax=max_bias)
 
         p1 = axes[0].pcolormesh(elon2d, elat2d, ec_amp, cmap=cmap_amp, norm=norm_amp, shading="auto")
@@ -552,7 +538,7 @@ def main():
     parser = argparse.ArgumentParser(description="Diurnal Cycle Evaluation: RegCM vs ERA5 Subdaily")
     parser.add_argument("--start-date", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end-date", required=True, help="End date (YYYY-MM-DD)")
-    parser.add_argument("--vars", default="pr,tas", help="Comma-separated variables (e.g. pr,tas)")
+    parser.add_argument("--vars", default="tas", help="Comma-separated variables (default: tas)")
     args = parser.parse_args()
 
     start_dt = pd.to_datetime(args.start_date)
@@ -576,7 +562,6 @@ def main():
     regcm_out_dir = cp.POSTPROC_ROOT.parent / cp.SIM_NAME / "output"
 
     all_era5_files = []
-    all_regcm_shf = []
     all_regcm_srf = []
 
     for y in years:
@@ -586,13 +571,10 @@ def main():
         else:
             logger.warning(f"ERA5 file missing: {ef}")
 
-        shf = sorted(glob.glob(str(regcm_out_dir / f"test_001_SHF.{y}*.nc")))
         srf = sorted(glob.glob(str(regcm_out_dir / f"test_001_SRF.{y}*.nc")))
-        if not shf or not srf:
+        if not srf:
             archive_dir = cp.OUTPUT_DIR.parent / "archive_periods" / f"{y}_all"
-            shf = sorted(glob.glob(str(archive_dir / f"test_001_SHF.{y}*.nc")))
             srf = sorted(glob.glob(str(archive_dir / f"test_001_SRF.{y}*.nc")))
-        all_regcm_shf.extend(shf)
         all_regcm_srf.extend(srf)
 
     if not all_era5_files or not all_regcm_srf:
@@ -607,7 +589,7 @@ def main():
 
     for v in var_list:
         logger.info(f"\n─── Evaluating Diurnal Cycle for {v} across {len(years)} years ({period_str}) ───")
-        regcm_files = all_regcm_shf if v == "pr" else all_regcm_srf
+        regcm_files = all_regcm_srf
 
         # 1. RegCM
         regcm_curves, regcm_grids = process_regcm(v, regcm_files, regcm_crop_info, args.start_date, args.end_date)
@@ -636,7 +618,7 @@ def main():
     save_metrics_csv(all_metrics, out_csv)
 
     logger.info(f"\n{'═'*60}")
-    logger.info(f"  ✔ Diurnal cycle processing complete")
+    logger.info(f"  ✔ Diurnal cycle processing complete (tas)")
     logger.info(f"  Figures: {out_diurnal_dir}")
     logger.info(f"  Metrics: {out_metrics_dir}")
     logger.info(f"{'═'*60}\n")

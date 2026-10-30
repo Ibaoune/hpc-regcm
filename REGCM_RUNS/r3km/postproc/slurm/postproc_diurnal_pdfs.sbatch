@@ -20,7 +20,7 @@ export POSTPROC_CONFIG=configs/experiments/r3km_2000_2004.yaml
 echo "Host: $(hostname) | Start: $(date) | Period: $START_DATE -> $END_DATE"
 
 echo "── 05_diurnal_cycle ──"
-python3 -u src/diurnal/05_diurnal_cycle.py --start-date $START_DATE --end-date $END_DATE --vars pr,tas || echo "[FAIL] diurnal"
+python3 -u src/diurnal/05_diurnal_cycle.py --start-date $START_DATE --end-date $END_DATE --vars tas || echo "[FAIL] diurnal"
 
 echo "── 04_hourly_precip_pdf ──"
 python3 -u src/pdfs/04_hourly_precip_pdf.py --start-date $START_DATE --end-date $END_DATE || echo "[FAIL] hourly pdf"
