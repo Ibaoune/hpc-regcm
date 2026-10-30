@@ -228,10 +228,18 @@ def process_regcm(var_name, regcm_files, regcm_crop_info, start_date, end_date):
     regcm_grids = {}
     for s in SEASONS:
         c = np.maximum(hourly_mean_cnt[s], 1)
-        regcm_curves[s] = hourly_mean_sum[s] / c
+        curve = hourly_mean_sum[s] / c
 
         gc = np.maximum(hourly_grid_cnt[s][:, None, None], 1)
-        regcm_grids[s] = (hourly_grid_sum[s] / gc).astype(np.float32)
+        grid = (hourly_grid_sum[s] / gc).astype(np.float32)
+
+        if hourly_mean_cnt[s][0] == 0:
+            logger.info(f"Hour 00:00 UTC missing in RegCM ({s}), linearly interpolating from 23:00 and 01:00 UTC...")
+            curve[0] = (curve[23] + curve[1]) / 2.0
+            grid[0] = (grid[23] + grid[1]) / 2.0
+
+        regcm_curves[s] = curve
+        regcm_grids[s] = grid
 
     return regcm_curves, regcm_grids
 
@@ -294,10 +302,18 @@ def process_era5(var_name, era5_files, era5_crop_info, start_date, end_date):
     era5_grids = {}
     for s in SEASONS:
         c = np.maximum(hourly_mean_cnt[s], 1)
-        era5_curves[s] = hourly_mean_sum[s] / c
+        curve = hourly_mean_sum[s] / c
 
         gc = np.maximum(hourly_grid_cnt[s][:, None, None], 1)
-        era5_grids[s] = (hourly_grid_sum[s] / gc).astype(np.float32)
+        grid = (hourly_grid_sum[s] / gc).astype(np.float32)
+
+        if hourly_mean_cnt[s][0] == 0:
+            logger.info(f"Hour 00:00 UTC missing in ERA5 ({s}), linearly interpolating from 23:00 and 01:00 UTC...")
+            curve[0] = (curve[23] + curve[1]) / 2.0
+            grid[0] = (grid[23] + grid[1]) / 2.0
+
+        era5_curves[s] = curve
+        era5_grids[s] = grid
 
     return era5_curves, era5_grids
 
