@@ -606,8 +606,7 @@ def main():
     all_metrics = []
 
     for v in var_list:
-        logger.info(f"
-─── Evaluating Diurnal Cycle for {v} across {len(years)} years ({period_str}) ───")
+        logger.info(f"\n─── Evaluating Diurnal Cycle for {v} across {len(years)} years ({period_str}) ───")
         regcm_files = all_regcm_shf if v == "pr" else all_regcm_srf
 
         # 1. RegCM
@@ -636,12 +635,11 @@ def main():
     out_csv = out_metrics_dir / f"diurnal_cycle_metrics_{year_str}.csv"
     save_metrics_csv(all_metrics, out_csv)
 
-    logger.info(f"
-{'═'*60}")
+    logger.info(f"\n{'═'*60}")
+    logger.info(f"  ✔ Diurnal cycle processing complete")
     logger.info(f"  Figures: {out_diurnal_dir}")
     logger.info(f"  Metrics: {out_metrics_dir}")
-    logger.info(f"{'═'*60}
-")
+    logger.info(f"{'═'*60}\n")
 
 if __name__ == "__main__":
     main()
